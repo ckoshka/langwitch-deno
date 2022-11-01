@@ -33,3 +33,13 @@ const buildRustBinaries = async () => {
 	$.logLight(`Done!`);
 }
 
+const addLangwitch = async () => {
+	await Deno.writeTextFile(`lw`, `#!/bin/bash
+URL="/Users/ckoshka/programming/langwitch/langwitch-deno/plugins/configs/runner.ts"
+deno run -A --unstable $URL $1 $2`);
+	await $`chmod +x lw`;
+}
+
+await buildRustBinaries();
+await addLangwitch();
+console.log("You're ready! Run this:\nlw fetch {language}\nThen this:\nlw learn {language}");

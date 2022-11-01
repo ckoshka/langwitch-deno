@@ -1,7 +1,3 @@
-#!/bin/bash
-set -euo pipefail
-IFS=$'\n\t'
-
 # use a nix thing to procure all the necessary stuff
 # no nix has a bad startup time, reduce how? 
 # "run this script before opening lw"
