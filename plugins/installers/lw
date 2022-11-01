@@ -1,0 +1,12 @@
+#!/bin/bash
+set -euo pipefail
+IFS=$'\n\t'
+
+# use a nix thing to procure all the necessary stuff
+# no nix has a bad startup time, reduce how? 
+# "run this script before opening lw"
+# also the relevant config stuff for editing
+# the runner needs to point to the urls?
+# also remember to clean stuff
+# or you could just link to the file and create a shortened alias for it?
+# after finishing spawn a process that recaches stuff?

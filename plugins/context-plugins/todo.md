@@ -1,0 +1,2 @@
+- abstract away the implementations like we did for the preprocessing
+- why is the columnar config thing and then the js querier i.e the backend all in separate places

@@ -1,0 +1,2 @@
+- scripts for updating these regularly?
+- could do as github action?
