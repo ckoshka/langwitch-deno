@@ -1,0 +1,1 @@
+// default fn -> async iterable

@@ -1,10 +1,9 @@
 import { LanguageMetadata } from "../../context-plugins/context-types/languages.ts";
-import { int,Maybe,BaseContext } from "./deps.ts";
-
+import { BaseContext, int, Maybe } from "./deps.ts";
 
 type Filename = string;
 export type MixedBackendArgs = {
-	sentences: Filename;
+	sentencesFile: Filename;
 	desiredWords: string[];
 	knownWords: string[];
 	maximumWordsToQueue: number;
@@ -13,4 +12,11 @@ export type MixedBackendArgs = {
 		s: string,
 	) => Maybe<BaseContext & { metadata: LanguageMetadata }>;
 	filterCtxs: (ctxs: [string, string][]) => [string, string][];
+};
+
+export type InitialiseMixedBackendArgs = {
+	backend: {
+		wordlistMaximumIterSteps: number;
+		eachWordCallback: (s: string) => void;
+	} & MixedBackendArgs;
 };

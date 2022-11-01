@@ -18,7 +18,7 @@ import {
 	Rem,
 	use,
 } from "./deps.ts";
-import { MixedBackendArgs } from "./types.ts";
+import { InitialiseMixedBackendArgs, MixedBackendArgs } from "./types.ts";
 
 export const makeFilenames = (filename: string) => {
 	const encodings = `${filename}.langwitch.ctxs`;
@@ -27,47 +27,57 @@ export const makeFilenames = (filename: string) => {
 	return { encodings, dict, wordlist };
 };
 
-export const preprocessTsv = (args: MixedBackendArgs) =>
-	use<BinaryFileReader & FileExistsEffect & CommandOutputEffect>()
+export const preprocessTsv = () =>
+	use<
+		& InitialiseMixedBackendArgs
+		& BinaryFileReader
+		& FileExistsEffect
+		& CommandOutputEffect
+	>()
 		.map2(async (fx) => {
-			const { encodings, dict } = makeFilenames(args.sentences);
+			const { encodings, dict } = makeFilenames(fx.backend.sentencesFile);
 
 			await fx.fileExists(encodings).then(async (exists) =>
 				!exists
 					? await fx.runCmds([
-						`cat ${args.sentences}`,
+						`cat ${fx.backend.sentencesFile}`,
 						`${fx.bins.dicer} --order [1]`,
 						`${fx.bins.encoder} --encodings_filename ${encodings} --dictionary_filename ${dict}`,
 					])
 					: {}
 			);
-
-			return args;
 		});
 
-export const createMixedBackend = (args: MixedBackendArgs) =>
+export const createMixedBackend = (desiredWords: string[]) =>
 	use<
+		& InitialiseMixedBackendArgs
 		& BinaryFileReader
 		& RemoveFileEffect
 		& TempFileEffect
 		& CommandOutputEffect
 	>().map2(
 		async (fx) => {
-			const { encodings } = makeFilenames(args.sentences);
+			const { encodings } = makeFilenames(fx.backend.sentencesFile);
 
 			//console.log(args.desiredWords);
 
-			const [desiredWords, knownWords] = await Promise.all([
+			const [desiredWordsFile, knownWordsFile] = await Promise.all([
 				fx.createTempFile(
-					args.desiredWords.slice(0, args.maximumWordsToQueue).concat(args.knownWords.slice(Math.round(args.knownWords.length / 10) * 9)).join("\n"),
+					desiredWords.slice(0, fx.backend.maximumWordsToQueue)
+						.concat(
+							fx.backend.knownWords.slice(
+								Math.round(fx.backend.knownWords.length / 10) *
+									9,
+							),
+						).join("\n"),
 					// this makes it slower
 				),
-				fx.createTempFile(args.knownWords.join("\n")),
+				fx.createTempFile(fx.backend.knownWords.join("\n")),
 			]);
 
 			const lines = await Rem.pipe(
 				fx.getIterFromCmds([
-					`${fx.bins.frequencyChecker} --desired_words_file ${desiredWords} --known_words_file ${knownWords} --sentences_file ${args.sentences} --ctxs_file ${encodings}`,
+					`${fx.bins.frequencyChecker} --desired_words_file ${desiredWordsFile} --known_words_file ${knownWordsFile} --sentences_file ${fx.backend.sentencesFile} --ctxs_file ${encodings}`,
 				]),
 				AsyncGen.toArray,
 			);
@@ -85,7 +95,10 @@ export const createMixedBackend = (args: MixedBackendArgs) =>
 				AsyncGen.fromIter,
 				// so the filtering step should happen here
 				AsyncGen.map((line) => {
-					return args.toContext(fast1a32(line[1]) as int, line.join("\t"));
+					return fx.backend.toContext(
+						fast1a32(line[1]) as int,
+						line.join("\t"),
+					);
 				}),
 				AsyncGen.filter((ctx) => ctx.isSome()),
 				AsyncGen.map((ctx) => {
@@ -95,8 +108,8 @@ export const createMixedBackend = (args: MixedBackendArgs) =>
 				AsyncGen.toArray,
 			);
 			// the id numbers are misaligned now.
-			fx.removeFile(desiredWords);
-			fx.removeFile(knownWords);
+			fx.removeFile(desiredWordsFile);
+			fx.removeFile(knownWordsFile);
 
 			const reverseMap = new Map(ctxs.map((c) => [c.id, c]));
 
@@ -113,21 +126,18 @@ export const createMixedBackend = (args: MixedBackendArgs) =>
 
 // TODO: add deduplicate, then check capitals?
 
-export const makeWordlist = (
-	args: MixedBackendArgs,
-	maxIters: number,
-	cb: (s: string) => void,
-) => use<
+export const makeWordlist = use<
+	& InitialiseMixedBackendArgs
 	& BinaryFileReader
 	& FileExistsEffect
 	& CommandOutputEffect
 	& WriteTextFileEffect
 	& ReadFileEffect<Promise<string>>
->().chain(
-	() => preprocessTsv(args),
-).map2(async (fx) => {
-	const knownWords = new Set(args.knownWords);
-	const { encodings, dict, wordlist } = makeFilenames(args.sentences);
+>().chain(preprocessTsv).map2(async (fx) => {
+	const knownWords = new Set(fx.backend.knownWords);
+	const { encodings, dict, wordlist } = makeFilenames(
+		fx.backend.sentencesFile,
+	);
 	const words: string[] = [];
 	if (await fx.fileExists(wordlist)) {
 		await fx.readFile(wordlist).then((x) => x.split("\n")).then((xs) =>
@@ -136,13 +146,15 @@ export const makeWordlist = (
 	} else {
 		await Rem.pipe(
 			fx.getIterFromCmds([
-				`${fx.bins.wordlist} --ctxs_msgpack ${encodings} --dict_msgpack ${dict} --existing "${Array.from(knownWords).join(" ")}"`,
+				`${fx.bins.wordlist} --ctxs_msgpack ${encodings} --dict_msgpack ${dict} --existing "${
+					Array.from(knownWords).join(" ")
+				}"`,
 			]),
 			AsyncGen.map((w) => w.split(" ")),
-			AsyncGen.take(maxIters),
+			AsyncGen.take(fx.backend.wordlistMaximumIterSteps),
 			AsyncGen.map((word) => {
 				words.push(...word.filter((w: string) => w.length > 0));
-				word.forEach(cb);
+				word.forEach(fx.backend.eachWordCallback);
 			}),
 			AsyncGen.toArray,
 		);
@@ -153,15 +165,7 @@ export const makeWordlist = (
 		);
 	}
 
-	return {
-		...args,
-		desiredWords: words.filter(k => !knownWords.has(k))
-	};
+	return words.filter((k) => !knownWords.has(k));
 });
 
-export type InitialiseMixedBackendArgs = {
-	wordlistMaximumIterSteps: number;
-	eachWordCallback: (s: string) => void;
-} & MixedBackendArgs;
-
-export const initialiseMixedBackend = (args: InitialiseMixedBackendArgs) => makeWordlist(args, args.wordlistMaximumIterSteps, args.eachWordCallback).chain(createMixedBackend);
+export const initialiseMixedBackend = makeWordlist.chain(createMixedBackend);

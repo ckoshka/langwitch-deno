@@ -55,6 +55,29 @@ export const createSession = () =>
 						)
 						.add(Quiz.beforeF(LanguageQuiz))
 						.add(Ask.afterF(Exit).afterF(Known).after(Skip))
+						// each of these could be a standalone script, 
+						// read stdin, write stdout
+						// effects implemented via commandline flags
+						// or config file
+						// ok, so with environmental variables this would work,
+						// but we need to explicitly declare them and check
+						// for their existence instead of dreaded undefined > type coercion
+						// for things that require function not data effect impls, we could simply have
+						// a default export
+						// we need some kind of scoping for the hierarchical flags otherwise we
+						// could run into namespace conflicts
+						// fx <- Proxy that checks for env variables?
+						// spread arguments and defaults? 
+						// configure env variables via a revisable...
+						// distinct pipeline
+						// feedback pipeline, nextstate pipeline (composed of several), 
+						// quiz, ask, interpret, mark
+						// linear pipeline model has advantage of being easy to understand
+						// but quite restrictive and prevents parallelisation
+						// and prevents them from talking to one another
+						
+						// directed graph?
+						// "piggyback"
 						.add(LanguageMarker)
 						.add(NextState.afterF(Stats<null>()).afterF(Save))
 						.run("quiz", {
@@ -74,7 +97,7 @@ export const createSession = () =>
 					knownWords: Object.values(conceptsMap).map((c) => c.name),
 					toContext,
 					filterCtxs: (ctxs) => filterArr(ctxs, (m) => m),
-					eachWordCallback: (c) => console.log(c),
+					eachWordCallback: (c) => {},
 				})
 			),
 		}));
@@ -130,6 +153,7 @@ export default () =>
 				tap: (_) => (t) => t,
 				ask: (s) => Input.prompt(s || "best guess?"),
 				log: (_) => {},
+				exit: () => Deno.exit()
 			});
 		},
 	).implF(() => implFileSystem);

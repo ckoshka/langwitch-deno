@@ -14,7 +14,7 @@ export const futurity = (concept: Concept) =>
 
 // first, add a cache table
 // then change chain/reduce to free.flatten
-export const sortContexts = (state: State) =>
+export const sortContexts1 = (state: State) =>
 	(ctxs: BaseContext[]) => {
 		const cache: Map<string, number> = new Map();
 		const positions: Map<int, number> = new Map();
@@ -63,9 +63,8 @@ export const sortContexts = (state: State) =>
 // if it's based on the position, it will alternate rapidly between them
 // so we need some extra randomness
 
-export const sortContexts2 = (state: State) =>
+export const sortContexts = (state: State) =>
 	(ctxs: BaseContext[]) => {
-		const cache: Map<string, number> = new Map();
 		const positions: Map<int, number> = new Map();
 		ctxs.map((c, i) => positions.set(c.id, i));
 		const scoredCtxs = ctxs.map(ctx => [ctx, ctx.concepts.map(c => state.db.concepts[c].decayCurve).reduce((a, b) => a + b, 0.0)] as const);
