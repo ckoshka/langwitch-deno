@@ -38,7 +38,7 @@ export { default as wu, type WuIterable } from "https://esm.sh/wu@2.1.0";
 export * as zod from "https://esm.sh/zod@3.19.1";
 export * from "../langwitch-core/core/mod.ts";
 export * from "../langwitch-shared-types/mod.ts";
-export * from "../misc-packages/ensure/mod.ts";
+export * from "../misc-packages-2/ensure/mod.ts";
 export * from "../misc-packages-2/state_machine/mod.ts";
 export * from "../misc-packages-2/utils/mod.ts";
 export * from "https://esm.sh/monocle-ts@2.3.13";
