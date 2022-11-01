@@ -35,7 +35,7 @@ const buildRustBinaries = async () => {
 
 const addLangwitch = async () => {
 	await Deno.writeTextFile(`lw`, `#!/bin/bash
-URL="/Users/ckoshka/programming/langwitch/langwitch-deno/plugins/configs/runner.ts"
+URL="https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/plugins/configs/runner.ts"
 deno run -A --unstable $URL $1 $2`);
 	await $`chmod +x lw`;
 }
