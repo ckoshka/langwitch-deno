@@ -25,12 +25,12 @@ const buildRustBinaries = async () => {
 	$.logLight(`Done building targets...`);
 
 	await $`mkdir binaries`;
-	await $`mkdir .langwitch`;
-	await $`mkdir .langwitch/concepts`;
-	await $`mkdir .langwitch/data`;
+	await $`mkdir langwitch-home`;
+	await $`mkdir langwitch-home/concepts`;
+	await $`mkdir langwitch-home/data`;
 	await $`mv everything/target/release .`;
 	await $`mv release binaries`;
-	await $`mv binaries .langwitch`;
+	await $`mv binaries langwitch-home`;
 	Deno.remove(`everything`, {recursive: true});
 	$.logLight(`Done!`);
 }

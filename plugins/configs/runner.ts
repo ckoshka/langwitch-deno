@@ -21,19 +21,19 @@ import { implCommandOutput } from "../io_effects/mod.ts";
 import Session from "./language.ts";
 
 const makeSession = (language: string) => Session().run({
-	binariesFolder: `.langwitch/binaries`,
-	conceptsFile: `.langwitch/concepts/${language}.json`,
-	sentencesFile: `.langwitch/data/${language}`
+	binariesFolder: `langwitch-home/binaries`,
+	conceptsFile: `langwitch-home/concepts/${language}.json`,
+	sentencesFile: `langwitch-home/data/${language}`
 });
 
 const makeSentences = (language: string) => downloadLanguage(language)
 	.run({
 		catBinaryPath: `cat`,
 		curlBinaryPath: `curl`,
-		deduplicateBinaryPath: `.langwitch/binaries/dedup`,
+		deduplicateBinaryPath: `langwitch-home/binaries/dedup`,
 		fetch,
 		...implCommandOutput,
-		homeFolder: `.langwitch`
+		homeFolder: `langwitch-home`
 	});
 // todo: accept --sentences and --concepts
 const subcommand = Deno.args[0];
@@ -50,7 +50,7 @@ switch(subcommand) {
 		break
 	}
 	case "auto": {
-		for await (const file of Deno.readDir(".langwitch/concepts")) {
+		for await (const file of Deno.readDir("langwitch-home/concepts")) {
 			await makeSession(file.name.replace(".json", "")).catch(() => console.log("Next up..."));
 		}
 	}
