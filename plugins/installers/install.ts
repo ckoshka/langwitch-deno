@@ -26,6 +26,8 @@ const buildRustBinaries = async () => {
 
 	await $`mkdir binaries`;
 	await $`mkdir .langwitch`;
+	await $`mkdir .langwitch/concepts`;
+	await $`mkdir .langwitch/data`;
 	await $`mv everything/target/release .`;
 	await $`mv release binaries`;
 	await $`mv binaries .langwitch`;
