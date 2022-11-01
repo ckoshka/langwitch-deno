@@ -24,7 +24,6 @@ const buildRustBinaries = async () => {
 	await $`cd ..`.exportEnv();
 	$.logLight(`Done building targets...`);
 
-	await $`mkdir binaries`;
 	await $`mkdir langwitch-home`;
 	await $`mkdir langwitch-home/concepts`;
 	await $`mkdir langwitch-home/data`;

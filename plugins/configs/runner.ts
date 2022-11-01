@@ -46,7 +46,7 @@ switch(subcommand) {
 		break
 	}
 	case "learn": {
-		await makeSession(language).catch(() => {console.log("Session over!"); Deno.exit()});
+		await makeSession(language).catch((e) => {console.error(e); console.log("Session over!"); Deno.exit()});
 		break
 	}
 	case "auto": {

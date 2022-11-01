@@ -64,7 +64,7 @@ export const implCommandOutput: CommandOutputEffect = {
 		const file = await Deno.makeTempFile();
 		await Deno.writeTextFile(file, cmd);
 		try {
-			await Dax`bash ${file}`.noThrow();
+			await Dax`bash ${file}`.noThrow().quiet();
 		} finally {
 			await Deno.remove(file);
 		}

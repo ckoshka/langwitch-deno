@@ -9,3 +9,4 @@ export default (
 		? stateLens.compose(queueLens).modify((q) => q.slice(1))(m)
 		: m
 ;
+
