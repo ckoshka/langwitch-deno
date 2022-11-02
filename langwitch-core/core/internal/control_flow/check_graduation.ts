@@ -63,9 +63,11 @@ export const checkGraduation = (s1: State) =>
 				graduatedIds,
 			);
 
-			const nextIds = await f.nextConcepts.run(
+			const ids = await f.nextConcepts(
 				{ knowns: known, total: cfg.maxConsiderationSize },
-			).then((ids) => ({
+			);
+			
+			const nextIds = {
 				learning: [
 					...learning,
 					...f.filterConcepts(
@@ -73,13 +75,13 @@ export const checkGraduation = (s1: State) =>
 						f.params.maxLearnable - learning.size,
 					),
 				],
-			}));
+			};
 
 			return updateDbWithNew(s1.db.concepts)(nextIds.learning).map(
 				(updates) => ({ updates, ...nextIds }),
 			)
 				.map(async (rec) => ({
-					queue: await f.nextContexts.run(
+					queue: await f.nextContexts(
 						{ knowns: known, focus: new Set(rec.learning) },
 					),
 					...rec,

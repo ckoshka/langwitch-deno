@@ -6,14 +6,14 @@ type ConceptId = string;
 export type ConceptQueryEffect = {
 	nextConcepts: (
 		args: { knowns: Iterable<ConceptId>; total: number },
-	) => Set<ConceptId>;
+	) => Set<ConceptId> | Promise<Set<ConceptId>>;
 	//
 };
 
 export type ContextQueryEffect = {
 	nextContexts: (
 		args: { knowns: Iterable<ConceptId>; focus: Iterable<ConceptId> },
-	) => Array<BaseContext>;
+	) => Array<BaseContext> | Promise<Array<BaseContext>>;
 };
 
 export type StateCalculationEffects =

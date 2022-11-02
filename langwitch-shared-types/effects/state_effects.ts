@@ -1,10 +1,8 @@
+import { State } from "../mod.ts";
 import { Concept } from "../types/concept.ts";
 import { BaseContext } from "../types/context.ts";
 
-export type IsKnownEffect = {
-	isKnown: (c: Concept) => boolean;
-};
-
+type ContextScore = number;
 export type SortContextsEffect = {
-	sortContexts: (ctxs: BaseContext[]) => BaseContext[];
+	sortContexts: (state: State) => (ctxs: BaseContext[]) => [BaseContext, ContextScore][];
 };
