@@ -2,6 +2,7 @@ export * from "./effects/impl_memory_consts.ts";
 export * from "./effects/mod.ts";
 export * from "./effects/query_effects.ts";
 export * from "./effects/filter_effect.ts";
+export * from "./effects/state_effects.ts";
 export * from "./types/concept.ts";
 export * from "./types/context.ts";
 export * from "./types/database.ts";

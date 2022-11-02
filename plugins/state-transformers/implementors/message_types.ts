@@ -43,18 +43,21 @@ the ideal case would be:
  */
 
 export const ToMark = zod.object({
-	answer: zod.string(),
+	userAnswer: zod.string(),
 });
 
 export const ToProcess = zod.object({
 	results: zod.array(zod.tuple([zod.string(), zod.number().min(0).max(1)])),
+	userAnswer: zod.string(),
 });
 
+/*
 export const ToAsk = zod.object({
 	next: zod.string(),
 	msg: zod.string(),
 });
+*/
 
 export type ToMark = zod.infer<typeof ToMark>;
-export type ToAsk = zod.infer<typeof ToAsk>;
+//export type ToAsk = zod.infer<typeof ToAsk>;
 export type ToProcess = zod.infer<typeof ToProcess>;

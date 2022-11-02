@@ -34,7 +34,7 @@ import {
 	Save,
 	Skip,
 	Stats,
-} from "../context-plugins/mod.ts";
+} from "../state-transformers/mod.ts";
 import { processLine, tokenize } from "../preprocessing/mod.ts";
 import { DefaultConfigReader } from "./config_reader.ts";
 import { style } from "./theme.ts";

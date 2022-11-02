@@ -4,18 +4,16 @@ import { BaseContext } from "../types/context.ts";
 type ConceptId = string;
 
 export type ConceptQueryEffect = {
-	nextConcepts: Free<
-		Set<ConceptId>,
-		{ knowns: Iterable<ConceptId>; total: number }
-	>;
+	nextConcepts: (
+		args: { knowns: Iterable<ConceptId>; total: number },
+	) => Set<ConceptId>;
 	//
 };
 
 export type ContextQueryEffect = {
-	nextContexts: Free<
-		Array<BaseContext>,
-		{ knowns: Iterable<ConceptId>; focus: Iterable<ConceptId> }
-	>;
+	nextContexts: (
+		args: { knowns: Iterable<ConceptId>; focus: Iterable<ConceptId> },
+	) => Array<BaseContext>;
 };
 
 export type StateCalculationEffects =
