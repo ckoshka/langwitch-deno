@@ -1,0 +1,23 @@
+// each of these could be a standalone script,
+				// read stdin, write stdout
+				// effects implemented via commandline flags
+				// or config file
+				// ok, so with environmental variables this would work,
+				// but we need to explicitly declare them and check
+				// for their existence instead of dreaded undefined > type coercion
+				// for things that require function not data effect impls, we could simply have
+				// a default export
+				// we need some kind of scoping for the hierarchical flags otherwise we
+				// could run into namespace conflicts
+				// fx <- Proxy that checks for env variables?
+				// spread arguments and defaults?
+				// configure env variables via a revisable...
+				// distinct pipeline
+				// feedback pipeline, nextstate pipeline (composed of several),
+				// quiz, ask, interpret, mark
+				// linear pipeline model has advantage of being easy to understand
+				// but quite restrictive and prevents parallelisation
+				// and prevents them from talking to one another
+
+				// directed graph?
+				// "piggyback"

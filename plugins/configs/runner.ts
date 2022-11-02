@@ -3,7 +3,7 @@
 // installing a language should be separate, not implicit and automatic
 
 /**
- * 
+ *
  * await downloadLanguage(cfg.languageName)
 				.run({
 					catBinaryPath: `cat`,
@@ -20,41 +20,26 @@ import { downloadLanguage } from "../downloader-plugins/mod.ts";
 import { implCommandOutput } from "../io_effects/mod.ts";
 import Session from "./language.ts";
 
-const makeSession = (language: string) => Session().run({
-	binariesFolder: `langwitch-home/binaries`,
-	conceptsFile: `langwitch-home/concepts/${language}.json`,
-	sentencesFile: `langwitch-home/data/${language}`
-});
-
-const makeSentences = (language: string) => downloadLanguage(language)
-	.run({
-		catBinaryPath: `cat`,
-		curlBinaryPath: `curl`,
-		deduplicateBinaryPath: `langwitch-home/binaries/dedup`,
-		fetch,
-		...implCommandOutput,
-		homeFolder: `langwitch-home`
+const makeSession = (language: string) =>
+	Session().run({
+		binariesFolder: `langwitch-home/binaries`,
+		conceptsFile: `langwitch-home/concepts/${language}.json`,
+		sentencesFile: `langwitch-home/data/${language}`,
 	});
-// todo: accept --sentences and --concepts
-const subcommand = Deno.args[0];
-const language = Deno.args[1];
-// note to self: filtering contexts makes langwitch fail unexpectedly
-// might be acceptable to do this prior to downloading?
-switch(subcommand) {
-	case "fetch": {
-		await makeSentences(language).then(() => Deno.exit());
-		break
-	}
-	case "learn": {
-		await makeSession(language).catch((e) => {console.error(e); console.log("Session over!"); Deno.exit()});
-		break
-	}
-	case "auto": {
-		for await (const file of Deno.readDir("langwitch-home/concepts")) {
-			await makeSession(file.name.replace(".json", "")).catch(() => console.log("Next up..."));
-		}
-	}
-}
+
+const { backend, machine, run } = await makeSession("german");
+
+machine.params.maxLearnable = 5;
+machine.readLogBase = () => 2.5;
+
+run(backend)(machine);
+
+/**
+ * for await (const file of Deno.readDir("langwitch-home/concepts")) {
+			await makeSession(file.name.replace(".json", "")).catch(() =>
+				console.log("Next up...")
+			);
+		} */
 
 // TODO: Auto mode
 

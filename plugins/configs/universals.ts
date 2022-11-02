@@ -1,4 +1,4 @@
-import { implParams } from "../../deps.ts";
+import { implParams } from "../deps.ts";
 
 const now = () => new Date().getTime() / 1000 / 60 / 60;
 export const implUniversals = {

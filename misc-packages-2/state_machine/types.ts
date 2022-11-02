@@ -13,3 +13,4 @@ export type PhaseData<Out, MessageInput, StateType, Effs extends FnRecord, Deriv
 		input: Message<MessageInput, StateType>,
 	) => Free<Message<Out, StateType>, Effs, DerivedEffs>;
 };
+

@@ -42,6 +42,7 @@ export * as zod from "https://esm.sh/zod@3.19.1";
 export * from "../langwitch-core/core/mod.ts";
 export * from "../langwitch-shared-types/mod.ts";
 export * from "../misc-packages-2/ensure/mod.ts";
+export * from "../misc-packages-2/free_utils/mod.ts";
 export * from "../misc-packages-2/state_machine/mod.ts";
 export * from "../misc-packages-2/utils/mod.ts";
 
