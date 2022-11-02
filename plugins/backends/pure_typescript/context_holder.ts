@@ -1,20 +1,20 @@
-import { BaseContext, chunk, int, Pool, PromisedModule } from "./deps.ts";
+import { BaseContext, int } from "./deps.ts";
 import { Hasher } from "./hashing.ts";
-import { worker } from "./worker.ts";
+import { createWorker, CtxWorker } from "./worker.ts";
 
 // what does a worker thread do effectively?
 // it turns a synchronous function into an asynchronous one by executing it in a different process
 // the details of chunk size should be left to the implementation.
 
-export type CtxWorkerThread = PromisedModule<typeof worker>;
 export class ContextHolder {
 	constructor(
-		private workers: Array<typeof worker> = [],
+		private workers: Array<CtxWorker> = [],
 		private hasher: Hasher,
 	) {}
 	static async spawn(ctxs: BaseContext[]) {
 		//console.log("Got here")
 		const hasher = Hasher(true);
+		const worker = createWorker();
 		worker.add(
 			ctxs.map((c) => ({
 				id: c.id,
@@ -26,7 +26,7 @@ export class ContextHolder {
 		return new ContextHolder([worker], hasher);
 	}
 
-	gather<T>(fn: (w: typeof worker) => T): Promise<T[]> {
+	gather<T>(fn: (w: CtxWorker) => T): Promise<T[]> {
 		return Promise.resolve(this.workers.map(fn));
 	}
 

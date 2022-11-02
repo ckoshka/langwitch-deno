@@ -130,7 +130,7 @@ export default () =>
 					["x", "exit"],
 					["s", "skip sentence"],
 				],
-				filterConcepts: (cxs: string[], n: number|undefined) => {
+				filterConcepts: (cxs: string[], n: number) => {
 					const res = sortInfallible([
 						[maximiseEase(cxs), 0.5],
 					]).slice(0, n);
