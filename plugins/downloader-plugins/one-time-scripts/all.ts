@@ -20,10 +20,10 @@ for (const lang of languages) {
 			x.name,
 		) && x.language === lang
 	);
-    for (const archive of archives) {
-        await implCommandOutput.runCmds([
-            `curl -sLk ${archive.url} | head -n 350000 >> data/${lang}.tsv` 
-        ]);
-        console.log(`Completed ${archive.name} of ${lang}`);
-    }
+	for (const archive of archives) {
+		await implCommandOutput.runCmds([
+			`curl -sLk ${archive.url} | head -n 350000 >> data/${lang}.tsv`,
+		]);
+		console.log(`Completed ${archive.name} of ${lang}`);
+	}
 }

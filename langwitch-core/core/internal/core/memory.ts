@@ -39,7 +39,7 @@ export const adjust = (c: Memory) => (accuracy: number) =>
 		& MemoryConstantsReader
 	>().map2(
 		(f) => {
-			const { fit, remodel } = Mem({ logBase: f.readLogBase() });
+			const { fit, remodel } = Mem({ logBase: f.readLogBase });
 			const estimate = fit({
 				memory: c,
 				recordedAt: f.now().hoursFromEpoch,

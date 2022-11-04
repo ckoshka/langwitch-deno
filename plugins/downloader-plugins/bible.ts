@@ -34,5 +34,10 @@ getTsv(`https://archive.org/download/bible_alignments_v2/wolof_senegal`)
 			},
 		}),
 	)
-	.map((xs) => Deno.writeTextFile("ckoshka-personal/data/wolof", xs.map(x => x.join("\t")).join("\n")))
+	.map((xs) =>
+		Deno.writeTextFile(
+			"ckoshka-personal/data/wolof",
+			xs.map((x) => x.join("\t")).join("\n"),
+		)
+	)
 	.run({ fetch });

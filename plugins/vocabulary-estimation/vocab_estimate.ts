@@ -16,15 +16,17 @@ const calculateRange = (pastGuesses: number[]) =>
 	);
 
 export const guessWords = (state: GuessingState): string[] => {
-	const range = state.pastGuesses.length === 0 ? 0 : calculateRange(state.pastGuesses);
+	const range = state.pastGuesses.length === 0
+		? 0
+		: calculateRange(state.pastGuesses);
 
 	const words = state.table.slice(range, range + state.sampleSize);
 
 	return words.map((w) => w[1]);
 };
 
-export const guessTotalKnown = (state: GuessingState) =>
-	(numKnown: number): GuessingState => {
+export const guessTotalKnown =
+	(state: GuessingState) => (numKnown: number): GuessingState => {
 		const range = calculateRange(state.pastGuesses);
 		const ratio = numKnown / state.sampleSize;
 		const newEstimate = (range + state.sampleSize) * ratio;

@@ -11,8 +11,7 @@ import { downloadLanguage } from "../downloader-plugins/mod.ts";
 export const readConcepts = () =>
 	use<ReadTextFileEffect & DefaultConfigReader>().map2(async (fx) => {
 		let concepts: Concept[] = await ensure({
-			try: () =>
-				fx.readTextFile(fx.conceptsFile).then(JSON.parse),
+			try: () => fx.readTextFile(fx.conceptsFile).then(JSON.parse),
 			catch: async () => {
 				return [];
 			},
@@ -21,8 +20,9 @@ export const readConcepts = () =>
 		return makeRecord(concepts, (c) => c.name);
 	});
 
-export const ensureSentences = () => use<DefaultConfigReader & FileExistsEffect>().map2(async (cfg) => {
-	const exists = await cfg.fileExists(cfg.sentencesFile);
-	if (!exists) throw new Error("Sentences not found");
-	return cfg.sentencesFile;
-});
+export const ensureSentences = () =>
+	use<DefaultConfigReader & FileExistsEffect>().map2(async (cfg) => {
+		const exists = await cfg.fileExists(cfg.sentencesFile);
+		if (!exists) throw new Error("Sentences not found");
+		return cfg.sentencesFile;
+	});

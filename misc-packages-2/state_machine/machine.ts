@@ -1,11 +1,15 @@
 // deno-lint-ignore-file no-explicit-any
 
 import { ExcludeProps, use } from "./deps.ts";
-import { PhaseData,Message } from "./types.ts";
+import { Message, PhaseData } from "./types.ts";
 
-export type Machine<State, Effs> = ReturnType<typeof Machine<State, Effs>>
+export type Machine<State, Effs> = ReturnType<typeof Machine<State, Effs>>;
 
-export const Machine = <T, CurEffs = Record<never, never>, CurDerived = Record<never, never>>(
+export const Machine = <
+	T,
+	CurEffs = Record<never, never>,
+	CurDerived = Record<never, never>,
+>(
 	states: Record<string, PhaseData<any, any, T, any, any>> = {},
 ) => {
 	return {

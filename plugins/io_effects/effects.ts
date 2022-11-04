@@ -25,11 +25,11 @@ export type ReadTextFileEffect = {
 
 export type RunProcessEffect = {
 	runProcess: typeof Deno.run;
-}
+};
 
 export type CreateDirectoryEffect = {
 	mkdir: (dirname: string) => Promise<void>;
-}
+};
 
 type BinaryApp = string;
 

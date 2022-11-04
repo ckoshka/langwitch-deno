@@ -3,7 +3,7 @@ import { int } from "../deps.ts";
 export interface BaseContext {
 	concepts: Array<string>;
 	id: int;
-	metadata: Map<string, string>;
+	metadata: unknown;
 }
 // front: chinese characters
 // back: pinyin

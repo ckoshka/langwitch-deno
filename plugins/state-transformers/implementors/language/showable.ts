@@ -50,7 +50,7 @@ const letterToFancy: Record<string, string> = {
 	v: `🆅`,
 	w: `🆆`,
 	z: `🆉`,
-	y: `🆈`
+	y: `🆈`,
 };
 
 export const ShowPrompt = ({
@@ -75,7 +75,7 @@ export const ShowPrompt = ({
 		[
 			[`secondary bold`, `!${cmd[0]}`],
 			[`secondary`, ` => `],
-			[`secondary italic`, `${cmd[1]}`]
+			[`secondary italic`, `${cmd[1]}`],
 		] as Line
 	),
 	Br,

@@ -68,42 +68,55 @@ const yieldPhrases = function* (
 type WordPos = number;
 type Line = [WordPos, WordPos][];
 
-const makeDict = (alignments: string[]) =>
-	(referenceLines: string[]) => {
-		type Arrow = string;
-		type Occurrences = number;
-		const seg = new Intl.Segmenter(undefined, { granularity: "word" });
-		const segment = (s: string) =>
-			[...seg.segment(s.toLowerCase())].filter((x) => x.isWordLike)
-				.map(
-					(x) => x.segment,
-				);
-        const frqs: Map<Arrow, Occurrences> = new Map();
-        let count = 0;
-        for (const alignment of alignments) {
-            try {
-                const [s1, s2] = referenceLines[count].split(" ||| ");
-                for (const [eng, original] of yieldPhrases(segment(s1), segment(s2), align(alignment))) {
-                    const key = eng + "\t" + original;
-                    if (key.length > 1) {
-                        frqs.set(key, (frqs.get(key) || 0) + 1);
-                    }
-                }
-            } catch(e) {
-                console.error(e);
-            }
-            count += 1;
-            if (frqs.size % 200 === 0) {
-                console.error(frqs.size);
-            }
-        }
+const makeDict = (alignments: string[]) => (referenceLines: string[]) => {
+	type Arrow = string;
+	type Occurrences = number;
+	const seg = new Intl.Segmenter(undefined, { granularity: "word" });
+	const segment = (s: string) =>
+		[...seg.segment(s.toLowerCase())].filter((x) => x.isWordLike)
+			.map(
+				(x) => x.segment,
+			);
+	const frqs: Map<Arrow, Occurrences> = new Map();
+	let count = 0;
+	for (const alignment of alignments) {
+		try {
+			const [s1, s2] = referenceLines[count].split(" ||| ");
+			for (
+				const [eng, original] of yieldPhrases(
+					segment(s1),
+					segment(s2),
+					align(alignment),
+				)
+			) {
+				const key = eng + "\t" + original;
+				if (key.length > 1) {
+					frqs.set(key, (frqs.get(key) || 0) + 1);
+				}
+			}
+		} catch (e) {
+			console.error(e);
+		}
+		count += 1;
+		if (frqs.size % 200 === 0) {
+			console.error(frqs.size);
+		}
+	}
 
-        return Array.from(frqs.entries()).sort((a, b) => b[1] - a[1]);
-	};
+	return Array.from(frqs.entries()).sort((a, b) => b[1] - a[1]);
+};
 
 (async () => {
-    const alignments = Deno.readTextFileSync(`preprocessing-scripts/eflomal-scrape/alignments-afr.align`).split("\n");
-    const referenceLines = Deno.readTextFileSync(`preprocessing-scripts/eflomal-scrape/afrikaans.txt`).split("\n");
-    const results = makeDict(alignments)(referenceLines).filter(a => a[1] > 1);
-    results.map(r => [...r[0].split("\t"), r[1]].join("\t")).map(r => console.log(r));
-})()
+	const alignments = Deno.readTextFileSync(
+		`preprocessing-scripts/eflomal-scrape/alignments-afr.align`,
+	).split("\n");
+	const referenceLines = Deno.readTextFileSync(
+		`preprocessing-scripts/eflomal-scrape/afrikaans.txt`,
+	).split("\n");
+	const results = makeDict(alignments)(referenceLines).filter((a) =>
+		a[1] > 1
+	);
+	results.map((r) => [...r[0].split("\t"), r[1]].join("\t")).map((r) =>
+		console.log(r)
+	);
+})();

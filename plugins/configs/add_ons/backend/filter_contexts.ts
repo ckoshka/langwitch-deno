@@ -1,7 +1,26 @@
-import { punctuation } from "../../deps.ts";
+import { punctuation } from "../../../deps.ts";
 
-// we want to create short-circuiting hard-filters from light to intense for efficiency
-// this is too strict?
+export default <T>(data: T[], toArr: (a0: T) => [string, string]) => {
+	let avg = 0;
+	for (const d of data) {
+		const x = toArr(d);
+		avg += Math.abs(1 - (x[0].length / x[1].length));
+	}
+	avg = avg / data.length;
+
+	const filt = filter({
+		avg,
+		fractionTolerance: 1.5,
+		maxRepeat: 3,
+		maxNonAlphabetic: 0.12,
+	});
+
+	return data.filter((y) => {
+		const x = toArr(y);
+		return filt(x[0], x[1]);
+	});
+};
+
 type Word = string;
 export const overlap = (s1: Set<Word>, s2: Set<Word>) => {
 	for (const item of s1) {
@@ -82,33 +101,3 @@ export const filter = (
 		return true;
 	};
 };
-
-export const filterArr = <T>(data: T[], toArr: (a0: T) => [string, string]) => {
-	let avg = 0;
-	for (const d of data) {
-		const x = toArr(d);
-		avg += Math.abs(1 - (x[0].length / x[1].length));
-	}
-	avg = avg / data.length;
-
-	const filt = filter({
-		avg,
-		fractionTolerance: 1.5,
-		maxRepeat: 3,
-		maxNonAlphabetic: 0.12,
-	});
-
-	return data.filter((y) => {
-		const x = toArr(y);
-		return filt(x[0], x[1]);
-	});
-};
-
-/*
-const blach = await Deno.readTextFile(`/Users/ckoshka/programming/langwitch/ckoshka-personal/data/english-portuguese-statmt.tsv`)
-    .then(d => d.split("\n").map(x => x.split("\t") as [string, string]).slice(0, 20000))
-console.log("Done loading");
-const res = filterArr(blach);
-console.log(`Did ${blach.length}, got ${res.length}`);
-console.log(res.reverse());
-*/

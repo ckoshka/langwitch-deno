@@ -9,19 +9,22 @@ import { RunProcessEffect } from "../io_effects/effects.ts";
 - auto-mode, some kind of timer then quit the process automatically? scarcity, limited resource, creates desire
 */
 
-export const timelimit = (secs: number) =>
-	(cmd: string[]) =>
-		use<RunProcessEffect>().map2(async (fx) => {
-			const proc = fx.runProcess({ cmd, stdin: "inherit", stdout: "inherit" });
-			await new Promise((resolve) => setTimeout(resolve, secs * 1000));
-			proc.kill("SIGINT");
-            console.log("hi");
-            await Input.prompt("hi")
+export const timelimit = (secs: number) => (cmd: string[]) =>
+	use<RunProcessEffect>().map2(async (fx) => {
+		const proc = fx.runProcess({
+			cmd,
+			stdin: "inherit",
+			stdout: "inherit",
 		});
+		await new Promise((resolve) => setTimeout(resolve, secs * 1000));
+		proc.kill("SIGINT");
+		console.log("hi");
+		await Input.prompt("hi");
+	});
 
 timelimit(10)(
 	`deno run -A --unstable plugins/context-plugins/implementors/tests/language.ts`
 		.split(" "),
 ).run({
-    runProcess: Deno.run
-})
+	runProcess: Deno.run,
+});

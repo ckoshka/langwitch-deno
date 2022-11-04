@@ -44,13 +44,15 @@ const translations = async function* (
 };
 
 (async () => {
-    const iter = await decomp(`https://object.pouta.csc.fi/OPUS-bible-uedin/v1/tmx/en-wo.tmx.gz`);
-    await Rem.pipe(
-        iter,
-        translations,
-        AsyncGen.map(t => console.log(t)),
-        AsyncGen.take(100),
-        AsyncGen.toArray
-    );
-    //console.log("Done");
-})()
+	const iter = await decomp(
+		`https://object.pouta.csc.fi/OPUS-bible-uedin/v1/tmx/en-wo.tmx.gz`,
+	);
+	await Rem.pipe(
+		iter,
+		translations,
+		AsyncGen.map((t) => console.log(t)),
+		AsyncGen.take(100),
+		AsyncGen.toArray,
+	);
+	//console.log("Done");
+})();

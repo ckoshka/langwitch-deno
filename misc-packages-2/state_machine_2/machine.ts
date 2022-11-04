@@ -23,7 +23,7 @@ export const Machine = <State>(
 		) => {
 			return Machine<State>({
 				...states,
-				[name]: async m => handler(await states[name](m)),
+				[name]: async (m) => handler(await states[name](m)),
 			});
 		},
 		prependTo: (
@@ -32,10 +32,10 @@ export const Machine = <State>(
 		) => {
 			return Machine<State>({
 				...states,
-				[name]: async m => states[name](await handler(m)),
+				[name]: async (m) => states[name](await handler(m)),
 			});
 		},
-		run: async (start: string, data: Message<null, State>) => {
+		start: async (start: string, data: Message<null, State>) => {
 			let nextState = start;
 			let currData = data;
 			for (;;) {

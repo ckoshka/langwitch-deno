@@ -18,11 +18,11 @@ import {
 } from "./sort_into_learned_vs_known.ts";
 
 const noneGraduated = (ids: string[]) => ids.length === 0;
-const atFullLearningCapacity = (max: number) =>
-	(learning: string[]) => learning.length >= max;
+const atFullLearningCapacity = (max: number) => (learning: string[]) =>
+	learning.length >= max;
 
-export const findGraduated = (db: Database) =>
-	(currConcepts: Set<string> | Array<string>) =>
+export const findGraduated =
+	(db: Database) => (currConcepts: Set<string> | Array<string>) =>
 		use<ParamsReader>().map2((f) =>
 			Array.from(currConcepts).filter((cid) => {
 				const c = db.concepts[cid];
@@ -66,7 +66,7 @@ export const checkGraduation = (s1: State) =>
 			const ids = await f.nextConcepts(
 				{ knowns: known, total: cfg.maxConsiderationSize },
 			);
-			
+
 			const nextIds = {
 				learning: [
 					...learning,
@@ -96,9 +96,9 @@ export const checkGraduation = (s1: State) =>
 						queue: rec.queue
 							.filter((ctx) => !existingIds.has(ctx.id)).concat(
 								s1.queue.slice(
-									Math.floor(rec.queue.length / 2) 
+									Math.floor(rec.queue.length / 2),
 								),
-							).filter(c => c !== undefined),
+							).filter((c) => c !== undefined),
 					};
 				})
 				.map((rec) => {
@@ -111,19 +111,11 @@ export const checkGraduation = (s1: State) =>
 						},
 					);
 
-					const s2 = <State> {
+					const s2: State = {
 						...s1,
 						db: {
 							...s1.db,
 							concepts,
-						},
-						stats: {
-							learnCount: Object.values(s1.db.concepts).filter((
-								concept,
-							) => concept.firstSeen >
-								cfg.metadata.startTimestamp
-							).length,
-							knownCount: known.size,
 						},
 						known: Array.from(known),
 						queue: rec.queue,

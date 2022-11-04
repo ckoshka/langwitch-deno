@@ -66,7 +66,7 @@ export const createSession = () =>
 						})
 				),
 			backend: initialiseMixedBackend,
-			conceptsMap
+			conceptsMap,
 		}));
 // use effectsOf
 const interpreter = await languageConfig.map((c) =>
@@ -81,17 +81,21 @@ const interpreter = await languageConfig.map((c) =>
 export default () =>
 	createSession().map(
 		async ({ backend: backendMonad, machine, conceptsMap }, cfg) => {
-
 			type BackendEffect = Parameters<typeof backendMonad.run>[0];
 
-			type MachineEffect = Omit<Parameters<typeof machine.run>[0], "getMetadata" | "nextContexts" | "nextConcepts">;
+			type MachineEffect = Omit<
+				Parameters<typeof machine.run>[0],
+				"getMetadata" | "nextContexts" | "nextConcepts"
+			>;
 
-			const run = (backendFx: BackendEffect) => async (machineFx: MachineEffect) => {
-				const backend = await backendMonad.run(backendFx);
-				await machine.run({...backend, ...machineFx});
-			}
+			const run =
+				(backendFx: BackendEffect) =>
+				async (machineFx: MachineEffect) => {
+					const backend = await backendMonad.run(backendFx);
+					await machine.run({ ...backend, ...machineFx });
+				};
 
-			const backendArgs = <BackendEffect>{
+			const backendArgs = <BackendEffect> {
 				backend: {
 					sentencesFile: cfg.sentencesFile,
 					desiredWords: [],
@@ -108,10 +112,10 @@ export default () =>
 					frequencyChecker: `${cfg.binariesFolder}/frqcheck_opt`,
 					wordlist: `${cfg.binariesFolder}/wordlist`,
 				},
-				...implFileSystem
-			}
+				...implFileSystem,
+			};
 
-			const machineArgs = <MachineEffect>{
+			const machineArgs = <MachineEffect> {
 				...implUniversals,
 				...implPartialStringSimilarity(),
 				...implPreprocess(),
@@ -119,17 +123,17 @@ export default () =>
 				hider: await hiderFromMsgpackUrl(
 					`https://github.com/ckoshka/langwitch_hider/raw/master/assets/frequency_table.msgpack`,
 				),
+				commands: [
+					["k", "mark known"],
+					["x", "exit"],
+					["s", "skip sentence"],
+				],
 				saveConcepts: async (c) => {
 					await Deno.writeTextFile(
 						cfg.conceptsFile,
 						JSON.stringify(c),
 					);
 				},
-				commands: [
-					["k", "mark known"],
-					["x", "exit"],
-					["s", "skip sentence"],
-				],
 				filterConcepts: (cxs: string[], n: number) => {
 					const res = sortInfallible([
 						[maximiseEase(cxs), 0.5],
@@ -141,9 +145,9 @@ export default () =>
 				tap: (_) => (t) => t,
 				ask: (s) => Input.prompt(s || "best guess?"),
 				log: (_) => {},
-				exit: () => Deno.exit()
+				exit: () => Deno.exit(),
 			};
 
-			return {backend: backendArgs, machine: machineArgs, run}
+			return { backend: backendArgs, machine: machineArgs, run };
 		},
 	).implF(() => implFileSystem);

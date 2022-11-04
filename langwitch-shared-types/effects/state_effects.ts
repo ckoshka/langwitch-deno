@@ -4,5 +4,7 @@ import { BaseContext } from "../types/context.ts";
 
 type ContextScore = number;
 export type SortContextsEffect = {
-	sortContexts: (state: State) => (ctxs: BaseContext[]) => [BaseContext, ContextScore][];
+	sortContexts: (
+		state: State,
+	) => (ctxs: BaseContext[]) => [BaseContext, ContextScore][];
 };

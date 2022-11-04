@@ -1,4 +1,3 @@
-
 type FreqIndex = number;
 type Word = string;
 
@@ -13,4 +12,3 @@ export type GuessResult = {
 	knownCount: number;
 	words: string[];
 };
-

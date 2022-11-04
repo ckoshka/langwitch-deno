@@ -12,7 +12,7 @@ export type Sentence = {
 const seg = new Intl.Segmenter(undefined, { granularity: "word" });
 const segment = (s: string) =>
 	[...seg.segment(s)].filter((c) => c.isWordLike).map((c) => c.segment);
-    
+
 export const Sentence = (s: string) => {
 	const words = segment(s);
 	const sentence = {

@@ -10,7 +10,9 @@ import {
 import { getUpdatedConcepts } from "../core/update_concepts.ts";
 
 export const updateTopContext = (s1: State) =>
-	use<LoggerEffect & SortContextsEffect>().map2((fx) => fx.sortContexts(s1)(s1.queue))
+	use<LoggerEffect & SortContextsEffect>().map2((fx) =>
+		fx.sortContexts(s1)(s1.queue)
+	)
 		.map(
 			(res, f) => {
 				if (res.length === 0) {

@@ -30,4 +30,4 @@ export default (m: Message<ToMark, State>) =>
 			}));
 
 			return m;
-		})
+		});

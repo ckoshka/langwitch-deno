@@ -1,27 +1,34 @@
-import { BaseContext, Concept, Message, State } from "../deps.ts";
-import { ToMark, ToProcess } from "./mod.ts";
+import { Async, BaseContext, Concept, Message, State } from "../deps.ts";
+import { LangwitchMessage, ToMark, ToProcess } from "./mod.ts";
+export type OptionalAsync<T extends Record<string, (...args: any[]) => any>> =
+	| T
+	| Async<T>;
 
-export type LoadConceptsEffect = {};
+export type LoadConceptsEffect = OptionalAsync<{
+	loadConcepts: () => Record<string, Concept>;
+}>;
 
 // nextContexts etc. is a problem bcs -> effect that supplies another effect
 
-export type FeedbackEffect = {
-	showFeedback: (m: Message<ToProcess, State>) => Message<unknown, State>;
-};
+export type FeedbackEffect = OptionalAsync<{
+	showFeedback: (m: Message<ToProcess, State>) => LangwitchMessage;
+}>;
 
-export type QuizEffect = {
-	quiz: (m: Message<unknown, State>) => Message<unknown | ToMark, State>;
+export type QuizEffect = OptionalAsync<{
+	quiz: (m: LangwitchMessage) => LangwitchMessage;
 	// usually ToMark
-};
+}>;
 
-export type InterpretEffect = {
-	interpret: (m: Message<ToMark, State>) => Message<unknown, State>;
-};
+export type InterpretEffect = OptionalAsync<{
+	interpret: (m: Message<ToMark, State>) => LangwitchMessage;
+}>;
 
-export type MarkerEffect = {
-	mark: (m: Message<ToMark, State>) => Message<ToProcess | unknown, State>;
-};
-
-export type NextStateEffect = {
-	nextState: (m: Message<ToProcess, State>) => Message<null, State>;
-};
+export type MarkerEffect = OptionalAsync<{
+	mark: (m: Message<ToMark, State>) => LangwitchMessage;
+}>;
+export type MachineEffect =
+	& LoadConceptsEffect
+	& FeedbackEffect
+	& QuizEffect
+	& InterpretEffect
+	& MarkerEffect;

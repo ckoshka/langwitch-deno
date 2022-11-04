@@ -1,4 +1,5 @@
-import { chroma, interpretComponent, themeColor } from "../deps.ts";
+import { Component, Input } from "../../../deps.ts";
+import { chroma, interpretComponent, themeColor } from "../../../deps.ts";
 
 const theme = themeColor(
 	chroma.scale(["blue", "purple", "magenta", "pink", "yellow"])
@@ -26,3 +27,9 @@ export const style = interpretComponent({
 		tertiary: theme("green"),
 	},
 });
+
+export default {
+	print: (s: Component) => console.log(style(s)),
+	ask: (s: string | undefined) => Input.prompt(s || "best guess?"),
+	//exit: () => Deno.exit(),
+};

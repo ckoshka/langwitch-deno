@@ -9,12 +9,5 @@ export type State = {
 	known: string[]; // this must be an array instead of a set because immer can't serialise them
 	learning: string[];
 	queue: BaseContext[];
-	stats: Stats; // some of these properties are clearly stateful, others are just calculated from the other data, some are even just static
 };
-
-export type Stats = {
-	learnCount: number;
-	knownCount: number;
-};
-
 // average rates? other metadata that permits calculation

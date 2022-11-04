@@ -41,9 +41,9 @@ export class ContextHolder {
 		const topN1s = await this.gather((w) => w.getNext(knowsAsInts, n * 2))
 			.then((a) => a.flat())
 			.then((xs) => xs.filter((x) => !knowsAsInts.has(x)));
-			//.then((xs) => xs.map(this.hasher.unhash))
-			//.then((xs) => xs.sort((a, b) => a.length - b.length))
-			//.then((xs) => xs.map(this.hasher.hash));
+		//.then((xs) => xs.map(this.hasher.unhash))
+		//.then((xs) => xs.sort((a, b) => a.length - b.length))
+		//.then((xs) => xs.map(this.hasher.hash));
 
 		// this has to be here because some words are duplicated
 

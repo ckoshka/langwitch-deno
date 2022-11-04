@@ -47,7 +47,7 @@ export const implSpeak = (
 	};
 };
 
-export const implAudio = ({mpvPath}: {mpvPath: string}) => ({
+export const implAudio = ({ mpvPath }: { mpvPath: string }) => ({
 	playAudio: async (audio: Uint8Array) => {
 		const proc = Deno.run({
 			cmd: [mpvPath, `--volume=83`, `-`],

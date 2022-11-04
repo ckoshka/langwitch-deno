@@ -1,10 +1,4 @@
-import {
-    Free,
-    Message,
-    Phase,
-    State,
-use
-} from "../../deps.ts";
+import { Free, Message, Phase, State, use } from "../../deps.ts";
 import { useNothing } from "../../helpers/effects/use_empty.ts";
 import { ToProcess } from "../message_types.ts";
 

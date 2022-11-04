@@ -1,28 +1,35 @@
 import { initialiseMixedBackend } from "../backends/mixed/mod.ts";
-import {
-	maximiseEase
-} from "../concept-selection/mod.ts";
+import { maximiseEase } from "../concept-selection/mod.ts";
 import {
 	checkGraduation,
 	Concept,
-	ensure, hiderFromMsgpackUrl, Machine,
+	ensure,
+	hiderFromMsgpackUrl,
+	Machine,
 	makeRecord,
-	refresh, sortInfallible, State,
+	refresh,
+	sortInfallible,
+	State,
 	updateTopContext,
-	use
+	use,
 } from "../deps.ts";
 import { implFileSystem } from "../io_effects/mod.ts";
-import {
-	filterArr,
-	languageConfig
-} from "../preprocessing/language/mod.ts";
+import { filterArr, languageConfig } from "../preprocessing/language/mod.ts";
 
 import {
-	Ask, Feedback, implPartialStringSimilarity,
-	implPreprocess, implUniversals, LanguageMetadata, NextState,
+	Ask,
+	ExitAfter,
+	Feedback,
+	implPartialStringSimilarity,
+	implPreprocess,
+	implUniversals,
+	LanguageMarker,
+	LanguageMetadata,
+	NextState,
 	Quiz,
 	Save,
-	ServerFeedback, ServerQuiz, ExitAfter, LanguageMarker
+	ServerFeedback,
+	ServerQuiz,
 } from "../context-plugins/mod.ts";
 import { processLine, tokenize } from "../preprocessing/mod.ts";
 
@@ -54,7 +61,9 @@ export const startSession = use<DefaultConfigReader>().map2(async (cfg) => {
 	concepts = concepts.filter((c) => c.timesSeen > 3);
 	//console.log(concepts);
 
-	const makeMachine = refresh({ concepts: makeRecord(concepts, c => c.name) }) // expose this
+	const makeMachine = refresh({
+		concepts: makeRecord(concepts, (c) => c.name),
+	}) // expose this
 		.chain(checkGraduation)
 		.chain(updateTopContext)
 		.chain((state: State) => {
@@ -76,7 +85,7 @@ export const startSession = use<DefaultConfigReader>().map2(async (cfg) => {
 		{
 			sentences: sentencesFolder,
 			desiredWords: [],
-			knownWords: concepts.map(c => c.name),
+			knownWords: concepts.map((c) => c.name),
 			toContext: await languageConfig.map((c) =>
 				processLine<string, LanguageMetadata>(c.contents as any)
 			).run({
@@ -85,11 +94,12 @@ export const startSession = use<DefaultConfigReader>().map2(async (cfg) => {
 					filterIsWordLike: true,
 				}),
 			}),
-					maximumWordsToQueue: 35,
-					wordlistMaximumIterSteps: 15,
-					filterCtxs: (ctxs) => filterArr(ctxs, (m) => m),
-					eachWordCallback: (c) => console.log(c),
-			}).map(async (backend) => {
+			maximumWordsToQueue: 35,
+			wordlistMaximumIterSteps: 15,
+			filterCtxs: (ctxs) => filterArr(ctxs, (m) => m),
+			eachWordCallback: (c) => console.log(c),
+		},
+	).map(async (backend) => {
 		await makeMachine.run({ // ok, so extract this out, flatten it. const backend = initialiseMixedBackend(...)
 			// then implF the backend on the flattened monad
 			...implUniversals,
@@ -130,7 +140,7 @@ export const startSession = use<DefaultConfigReader>().map2(async (cfg) => {
 							front: stuff.state.queue[0].metadata.front,
 						},
 						hint: stuff.hint,
-						knownCount: stuff.state.stats.knownCount
+						knownCount: stuff.state.stats.knownCount,
 					}));
 				} catch {
 					//
@@ -154,7 +164,7 @@ startSession.run({
 	homeFolder: `preprocessing-scripts/temporary-sim`,
 	languageName: Deno.args[0],
 	dataFolder: `preprocessing-scripts/data`,
-	known: []
+	known: [],
 }).then(() => Deno.exit());
 
 // abstract out the parts specific to an implementation i.e web server vs console vs discord

@@ -21,7 +21,7 @@ export const useMarkers = use<CoreEffects>().extendF((f) => ({
 		lastSeen: f.now().hoursFromEpoch,
 		decayCurve: f.params.knownThreshold / 2,
 		firstSeen: f.now().hoursFromEpoch,
-		timesSeen: 5
+		timesSeen: 5,
 	}),
 }));
 

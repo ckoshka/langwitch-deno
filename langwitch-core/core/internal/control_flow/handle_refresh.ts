@@ -6,7 +6,7 @@ const sortConcepts = (concepts: Array<Concept>) =>
 		(f) => {
 			const known: string[] = [];
 			const learning: string[] = [];
-			const { predict } = Mem({ logBase: f.readLogBase() });
+			const { predict } = Mem({ logBase: f.readLogBase });
 			concepts.forEach((c) =>
 				predict({ when: f.now().hoursFromEpoch, memory: c }) > 0.3 &&
 					c.timesSeen > 2 //! sacrifices purity and also parameterisation
@@ -23,8 +23,4 @@ export const refresh = (db: Database) =>
 		known,
 		learning,
 		queue: [],
-		stats: {
-			learnCount: 0,
-			knownCount: known.length,
-		},
 	}));

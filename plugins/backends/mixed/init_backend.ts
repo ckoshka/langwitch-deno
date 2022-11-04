@@ -1,4 +1,3 @@
-import { LanguageMetadata } from "../../context-plugins/context-types/mod.ts";
 import {
 	BinaryFileReader,
 	CommandOutputEffect,
@@ -7,6 +6,9 @@ import {
 	TempFileEffect,
 	WriteTextFileEffect,
 } from "../../io_effects/effects.ts";
+import { languageConfig } from "../../preprocessing/language/preproc.ts";
+import { processLine, tokenize } from "../../preprocessing/mod.ts";
+import { LanguageMetadata } from "../../state-transformers/mod.ts";
 import { initJsQuerier } from "../pure_typescript/impl_next_contexts.ts";
 import {
 	AsyncGen,
@@ -47,6 +49,15 @@ export const preprocessTsv = () =>
 					: {}
 			);
 		});
+
+const toContext = await languageConfig.map((c) =>
+	processLine<string, LanguageMetadata>(c.contents as any)
+).run({
+	tokenize: tokenize({
+		granularity: "word",
+		filterIsWordLike: true,
+	}),
+});
 
 export const createMixedBackend = (desiredWords: string[]) =>
 	use<
@@ -95,7 +106,7 @@ export const createMixedBackend = (desiredWords: string[]) =>
 				AsyncGen.fromIter,
 				// so the filtering step should happen here
 				AsyncGen.map((line) => {
-					return fx.backend.toContext(
+					return toContext(
 						fast1a32(line[1]) as int,
 						line.join("\t"),
 					);

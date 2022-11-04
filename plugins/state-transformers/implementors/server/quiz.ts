@@ -13,9 +13,9 @@ export type AvailableCommandsReader = {
 
 export default (m: Message<ToMark, State>) =>
 	use<
-		StdoutEffect
+		& StdoutEffect
 		& AvailableCommandsReader
-        & GetMetadataEffect<LanguageMetadata>
+		& GetMetadataEffect<LanguageMetadata>
 	>()
 		.chain(makeHint)
 		.map(async (hint, fx) => {
@@ -27,4 +27,4 @@ export default (m: Message<ToMark, State>) =>
 				commands: fx.commands,
 			}));
 			return m;
-		})
+		});

@@ -10,11 +10,13 @@ import $ from "https://deno.land/x/dax@0.9.0/mod.ts";
 const buildRustBinaries = async () => {
 	$.logLight(`Cloning directory...`);
 	await $`git clone --depth 1 https://github.com/ckoshka/everything`;
-	const rm = (folder: string) => Deno.remove(`everything/programs/${folder}`, {recursive: true});
+	const rm = (folder: string) =>
+		Deno.remove(`everything/programs/${folder}`, { recursive: true });
 	await Promise.all(
-	[`ai_stuff`, `archived`, `experimental`, `fun`, `useful`, `wasm_libs`].map(
-		rm,
-	),
+		[`ai_stuff`, `archived`, `experimental`, `fun`, `useful`, `wasm_libs`]
+			.map(
+				rm,
+			),
 	);
 	$.logLight(`Done cloning and cleaning directory...`);
 
@@ -30,17 +32,22 @@ const buildRustBinaries = async () => {
 	await $`mv everything/target/release .`;
 	await $`mv release binaries`;
 	await $`mv binaries langwitch-home`;
-	Deno.remove(`everything`, {recursive: true});
+	Deno.remove(`everything`, { recursive: true });
 	$.logLight(`Done!`);
-}
+};
 
 const addLangwitch = async () => {
-	await Deno.writeTextFile(`lw`, `#!/bin/bash
+	await Deno.writeTextFile(
+		`lw`,
+		`#!/bin/bash
 URL="https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/plugins/configs/runner.ts"
-deno run -A --unstable $URL $1 $2`);
+deno run -A --unstable $URL $1 $2`,
+	);
 	await $`chmod +x lw`;
-}
+};
 
 await buildRustBinaries();
 await addLangwitch();
-console.log("You're ready! Run this:\nlw fetch {language}\nThen this:\nlw learn {language}");
+console.log(
+	"You're ready! Run this:\nlw fetch {language}\nThen this:\nlw learn {language}",
+);

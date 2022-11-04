@@ -8,9 +8,6 @@ export type CoreParams = {
 	maxConsiderationSize: number; // defaults to 7
 	// larger: better on word memorisability
 	// smaller: better on path-optimality
-	metadata: {
-		startTimestamp: number;
-	};
 };
 
 export type ParamsReader = { params: CoreParams };

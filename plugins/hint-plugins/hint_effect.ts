@@ -23,14 +23,14 @@ export const makeHint = () =>
 						const concept = find(w as ConceptName);
 						if (!concept) return w.length;
 
-						const { predict } = Mem({ logBase: f.readLogBase() });
+						const { predict } = Mem({ logBase: f.readLogBase });
 
 						const proportion = predict({
 							memory: concept,
 							when: f.now().hoursFromEpoch,
 						});
 						const lettersShown = w.length -
-							Math.pow(proportion, f.readLogBase() - 1) *
+							Math.pow(proportion, f.readLogBase - 1) *
 								w.length;
 
 						return concept.timesSeen < 4
@@ -44,7 +44,7 @@ export const makeHint = () =>
 					.map((lettersShown, position) =>
 						f.hider.show(lettersShown)(words[position])
 					)
-					.map(hint => `${hint} (${hint.length})`)
+					.map((hint) => `${hint} (${hint.length})`)
 					.join(" ");
 			},
 		);

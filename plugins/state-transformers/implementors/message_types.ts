@@ -5,7 +5,7 @@
 // what steps do we have?
 
 import { ConceptName, Score, State } from "../deps.ts";
-import { zod } from "./deps.ts";
+import { Message, zod } from "./deps.ts";
 
 /*
 - show prompt
@@ -61,3 +61,7 @@ export const ToAsk = zod.object({
 export type ToMark = zod.infer<typeof ToMark>;
 //export type ToAsk = zod.infer<typeof ToAsk>;
 export type ToProcess = zod.infer<typeof ToProcess>;
+export type LangwitchMessage =
+	| Message<ToMark, State>
+	| Message<ToProcess, State>
+	| Message<null, State>;

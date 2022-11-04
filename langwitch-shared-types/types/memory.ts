@@ -8,4 +8,6 @@ export interface Memory {
 
 // E = 1.16828
 
-export type MemoryConstantsReader = ReadEffect<"readLogBase", number>;
+export type MemoryConstantsReader = {
+	readLogBase: number;
+};

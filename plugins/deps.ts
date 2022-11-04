@@ -2,7 +2,10 @@ export * from "https://cdn.jsdelivr.net/gh/ckoshka/average_sort/mod.ts";
 export * from "https://cdn.jsdelivr.net/gh/ckoshka/bashfully/rpc.ts";
 export * from "https://cdn.jsdelivr.net/gh/ckoshka/chunky/mod.ts";
 export * from "https://cdn.jsdelivr.net/gh/ckoshka/csv_search_engine/mod.ts";
-export { DiffLogger, prettify } from "https://cdn.jsdelivr.net/gh/ckoshka/difflog/mod.ts";
+export {
+	DiffLogger,
+	prettify,
+} from "https://cdn.jsdelivr.net/gh/ckoshka/difflog/mod.ts";
 export * from "https://cdn.jsdelivr.net/gh/ckoshka/free@latest/mod.ts";
 export { openLinesFromFile } from "https://cdn.jsdelivr.net/gh/ckoshka/gen/impure/iters.ts";
 export * from "https://cdn.jsdelivr.net/gh/ckoshka/gen/mod.ts";
@@ -26,7 +29,10 @@ export { colors } from "https://deno.land/x/cliffy@v0.25.2/ansi/colors.ts";
 export * from "https://deno.land/x/cliffy@v0.25.2/prompt/mod.ts";
 export { Input } from "https://deno.land/x/cliffy@v0.25.2/prompt/mod.ts";
 export { default as Dax } from "https://deno.land/x/dax@0.9.0/mod.ts";
-export { getStdin, getStdinBuffer } from "https://deno.land/x/get_stdin@v1.1.0/mod.ts";
+export {
+	getStdin,
+	getStdinBuffer,
+} from "https://deno.land/x/get_stdin@v1.1.0/mod.ts";
 export * from "https://deno.land/x/shell_stream@v1.0.22/mod.ts";
 export { z } from "https://deno.land/x/zod@v3.19.1/mod.ts";
 export { default as romanize } from "https://esm.sh/any-ascii@0.3.1";
@@ -45,5 +51,3 @@ export * from "../misc-packages-2/ensure/mod.ts";
 export * from "../misc-packages-2/free_utils/mod.ts";
 export * from "../misc-packages-2/state_machine/mod.ts";
 export * from "../misc-packages-2/utils/mod.ts";
-
-
