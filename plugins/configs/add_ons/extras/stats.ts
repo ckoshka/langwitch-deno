@@ -2,6 +2,10 @@
 // 15, 30, 50, 75, 100 ?
 // you could use the diff logger, i.e known: -> added new words
 
+import { Message,State,use,Component,Br,Cls, UserInputEffect } from "../../../deps.ts";
+import { PrinterEffect } from "../../../state-transformers/helpers/effects/mod.ts";
+import { WordsPerHourCalculator } from "../../../stats/words_per_hour/mod.ts";
+
 // ok, so phase transitions:
 // - notify when a new word is being introduced - so this needs to come before
 // - notify when a word has graduated
@@ -12,10 +16,6 @@
 // - speed
 // - how many (learned/known/planted/watered)
 // this should ideally be separated into several different functions
-
-import { Message, State, use } from "../../deps.ts";
-import { PrinterEffect } from "../../helpers/effects/print.ts";
-import { Br, Cls, Component, WordsPerHourCalculator } from "../deps.ts";
 
 export const UpdateTracker = <T>() => {
 	const last = new Set<T>();
@@ -32,7 +32,7 @@ export const UpdateTracker = <T>() => {
 	};
 };
 
-export default <T>() => {
+export default () => {
 	let learned = UpdateTracker<string>();
 	let known = UpdateTracker<string>();
 
@@ -45,10 +45,10 @@ export default <T>() => {
 
 	let notNew = true;
 
-	return (
-		m: Message<T, State>,
-	) => use<PrinterEffect>().map2(
-		async (fx) => {
+	return use<PrinterEffect & UserInputEffect<Promise<string>>>().map2(
+		(fx) => async (
+			m: Message<unknown, State>,
+		) => {
 			const newWords = learned.update(m.state.learning);
 			if (newWords.length > 0) {
 				await fx.print(newWordIntroduced(newWords));
@@ -72,14 +72,8 @@ export default <T>() => {
 			}
 
 			if (graduatedWords.length > 0 || newWords.length > 0) {
-				return {
-					data: {
-						next: m.next,
-						msg: "continue?",
-					},
-					state: m.state,
-					next: "ask",
-				};
+				await fx.ask("Continue?")
+				return m;
 			}
 			return m;
 		},

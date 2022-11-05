@@ -1,25 +1,32 @@
-import { isMatching, Message, State, useMarkers } from "../../deps.ts";
-import { produce } from "../deps.ts";
-import { ToMark, ToProcess } from "../message_types.ts";
+import {
+	isMatching,
+	Message,
+	produce,
+	State,
+	useMarkers,
+} from "../../../deps.ts";
+import { ToMark, ToProcess } from "../../../state-transformers/mod.ts";
 
-export default (
-	m: Message<ToMark, State>,
-) => useMarkers.map2(async (fx) => {
-	if (!isMatching({ data: { answer: "!k" as const } }, m)) {
-		return m;
+export default (keyBinding = "!k") => useMarkers.map2((fx) =>
+	async (
+		m: Message<ToMark, State>,
+	) => {
+		if (!isMatching({ data: { answer: keyBinding } }, m)) {
+			return m;
+		}
+
+		const newState = await markKnown(m.state).run(fx);
+
+		return <Message<ToProcess, State>> {
+			data: {
+				results: [],
+				userAnswer: "",
+			},
+			state: newState,
+			next: "process", // bifurcating output is a problem for chaining
+		} as never;
 	}
-
-	const newState = await markKnown(m.state).run(fx);
-
-	return <Message<ToProcess, State>> {
-		data: {
-			results: [],
-			userAnswer: ""
-		},
-		state: newState,
-		next: "process", // bifurcating output is a problem for chaining
-	} as never;
-});
+);
 
 export const markKnown = (state: State) =>
 	useMarkers.map2((fx) =>

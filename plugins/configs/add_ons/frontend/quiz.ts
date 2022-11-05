@@ -27,7 +27,7 @@ import {
 // check if right metadata, what instructions, what cue, what commands
 
 export type RenderHintEffect<Meta> = {
-	renderHint: (state: State) => (metadata: Meta) => Component;
+	renderHint: (state: State) => (metadata: Meta) => string;
 };
 
 export type RenderCueEffect<Meta> = {
@@ -56,14 +56,9 @@ export const implCreateHint = async (
 	const fn = await makeHint().run(fx);
 	return {
 		renderHint: (state) =>
-			(meta) => [[
-				"primary 80",
-				`♡♡ hint: ${
-					fn((word) => state.db.concepts[word])(
-						meta.words,
-					)
-				}`,
-			]],
+			(meta) => fn((word) => state.db.concepts[word])(
+				meta.words,
+			),
 	};
 };
 
@@ -103,7 +98,10 @@ export default <T>(validatorFn: (a0: unknown) => a0 is T) => use<
 						Br,
 						...fx.renderCue(meta),
 						Br,
-						...fx.renderHint(m.state)(meta),
+						[
+							"primary 80",
+							`♡♡ hint: ${fx.renderHint(m.state)(meta)}`,
+						],
 						Br,
 						...fx.renderCommands(),
 						Br,

@@ -1,4 +1,4 @@
-import { Message, State, use } from "../../../deps.ts";
+import { Message, State, use } from "../../../../deps.ts";
 import Chime from "./Chime.js";
 import { AudioEffect } from "./speak.ts";
 

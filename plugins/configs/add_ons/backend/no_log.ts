@@ -1,6 +1,5 @@
-import { LangwitchEffect } from "../../language2.ts";
 
-export default <Pick<LangwitchEffect, "log" | "tap">> {
+export default {
 	log: () => {},
-	tap: (_) => (m) => m,
+	tap: (additionalMsg?: string) => <T>(data: T) => data
 };

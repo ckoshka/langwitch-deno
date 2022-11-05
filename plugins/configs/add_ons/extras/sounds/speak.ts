@@ -1,8 +1,10 @@
+import { Message, State, use } from "../../../../deps.ts";
 import { SpeechReq, ttsClient } from "../../../../external-apis/clients/tts.ts";
-import { LanguageMetadata } from "../../../context-types/mod.ts";
-import { Message, State, use } from "../../../deps.ts";
-import { GetMetadataEffect } from "../../../helpers/effects/metadata.ts";
-import { ToProcess } from "../../message_types.ts";
+import {
+	GetMetadataEffect,
+	LanguageMetadata,
+	ToProcess,
+} from "../../../../state-transformers/mod.ts";
 
 export type SpeakEffect = {
 	runSpeak: (sentence: string, speak: boolean) => void;

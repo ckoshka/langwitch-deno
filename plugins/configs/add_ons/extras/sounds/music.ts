@@ -1,4 +1,4 @@
-import { use } from "../../../deps.ts";
+import { use } from "../../../../deps.ts";
 
 export type AudioFromYoutubeEffect = {
 	playYoutubeAudio: (url: string) => Deno.Process;
