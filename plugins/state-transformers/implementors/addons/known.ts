@@ -14,6 +14,7 @@ export default (
 	return <Message<ToProcess, State>> {
 		data: {
 			results: [],
+			userAnswer: ""
 		},
 		state: newState,
 		next: "process", // bifurcating output is a problem for chaining

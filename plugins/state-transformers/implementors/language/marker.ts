@@ -13,20 +13,21 @@ export default Phase({
 			& PartialStringSimilarityEffect<0, 1>
 			& GetMetadataEffect<LanguageMetadata>
 		>().map2(async (f): Promise<Message<ToProcess, State>> => {
-			if (m.answer === "") {
-				m.answer = f.getMetadata(state.queue[0].id).back;
+			if (m.userAnswer === "") {
+				m.userAnswer = f.getMetadata(state.queue[0].id).back;
 			}
 			const results = f.getMetadata(state.queue[0].id).words.map((
 				w,
 			) => [
 				w,
 				f.partialSimilarity(f.preprocess(w))(
-					f.preprocess(m.answer),
+					f.preprocess(m.userAnswer),
 				),
 			] as [ConceptName, Score<0, 1>]);
 			return {
 				data: {
 					results,
+					userAnswer: m.userAnswer
 				},
 				state,
 				next: "feedback",

@@ -1,7 +1,7 @@
 import {
 	LanguageFieldNames,
 	LanguageMetadata,
-} from "../../context-plugins/context-types/mod.ts";
+} from "../../state-transformers/mod.ts";
 import { Revisable, revisable, use } from "../deps.ts";
 import { ColumnarConfig, TokenizeEffect } from "../mod.ts";
 

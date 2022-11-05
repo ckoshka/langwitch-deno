@@ -13,12 +13,10 @@ export const initJsQuerier = () =>
 		const holder = await ContextHolder.spawn(ctxs);
 		const reverseMap = new Map(ctxs.map((c) => [c.id, c]));
 		return {
-			nextConcepts: Free.reader(({ knowns, total }) =>
-				holder.getNextConcepts(knowns, total)
-			),
-			nextContexts: Free.reader(({ knowns, focus }) =>
+			nextConcepts: ({ knowns, total }) =>
+				holder.getNextConcepts(knowns, total),
+			nextContexts: ({ knowns, focus }) =>
 				holder.getNextContexts(knowns, focus)
-					.then((ids) => ids.map((i) => reverseMap.get(i)!))
-			),
+					.then((ids) => ids.map((i) => reverseMap.get(i)!)),
 		};
 	});
