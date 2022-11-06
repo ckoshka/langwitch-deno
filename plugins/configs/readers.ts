@@ -17,7 +17,7 @@ export const readConcepts = () =>
 			},
 		});
 		concepts = concepts.filter((c) => c.timesSeen > 3);
-		return makeRecord(concepts, (c) => c.name);
+		return makeRecord((c: Concept) => c.name)(concepts);
 	});
 
 export const ensureSentences = () =>

@@ -5,7 +5,7 @@ export default (keyBinding = "!x") => use<ExitEffect>().map2((fx) =>
 	(
 		msg: Message<ToMark, State>,
 	) => {
-		if (!isMatching({ data: { answer: keyBinding } }, msg)) {
+		if (!msg.data?.userAnswer?.toLowerCase().trim().startsWith(keyBinding)) {
 			return msg;
 		}
 

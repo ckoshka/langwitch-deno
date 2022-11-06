@@ -52,3 +52,4 @@ export * from "../misc-packages-2/free_utils/mod.ts";
 export * from "../misc-packages-2/state_machine/mod.ts";
 export * from "../misc-packages-2/utils/mod.ts";
 export * from "../misc-packages-2/await_record/mod.ts";
+export * as Comlink from "https://esm.sh/comlink";

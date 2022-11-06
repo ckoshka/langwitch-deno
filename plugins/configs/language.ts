@@ -5,7 +5,6 @@ import {
 	Free,
 	modifiable,
 	refresh,
-	revisable,
 	State,
 	updateTopContext,
 	use,
@@ -19,6 +18,7 @@ import noLogging from "./add_ons/backend/no_log.ts";
 import params from "./add_ons/backend/params.ts";
 import sorter from "./add_ons/backend/sort_contexts.ts";
 import time from "./add_ons/backend/time.ts";
+import { Exit, Has, Known, Remove, Save, Stats } from "./add_ons/extras/mod.ts";
 import {
 	default as Feedback,
 	implRenderFeedback,
@@ -38,20 +38,30 @@ import {
 	implRenderInstruction,
 } from "./add_ons/frontend/quiz.ts";
 import { isLanguageMetadata, MachineWrapper } from "./shared/mod.ts";
-import { Exit, Known, Remove, Save, Stats } from "./add_ons/extras/mod.ts";
 
 const createState = use<LoadConceptsEffect>()
 	.map2((fx) => fx.loadConcepts())
 	.chain((concepts) => refresh({ concepts }))
 	.chain(checkGraduation)
 	.chain(updateTopContext);
-// TODO: Add Save, Stats, 
+// TODO: Add Save, Stats,
 
 export const LangwitchMachine = MachineWrapper(Free.lift(Machine<State>()))
 	.addF("mark", Mark(isLanguageMetadata))
 	.addF("quiz", Quiz(isLanguageMetadata))
 	.addF("feedback", Feedback(isLanguageMetadata))
-	.addF("process", Process)
+	.addF("process", Process);
+
+
+export const addCommands = (machine: typeof LangwitchMachine) =>
+	machine.appendF("quiz", Exit("!x"))
+		.appendF("quiz", Known("!k"))
+		.append("quiz", Remove("!r"))
+		.appendF("process", Save)
+		.appendF("process", Stats())
+		.appendF("quiz", Has);
+
+
 
 export const initialiseLangwitch = <F, D>(lw: Free<Machine<State>, F, D>) =>
 	lw
@@ -86,7 +96,7 @@ export const createL0Config = async (
 			conceptsFile,
 			JSON.stringify(c),
 		);
-	}
+	},
 });
 
 export const L1Config = modifiable({
@@ -97,37 +107,61 @@ export const L1Config = modifiable({
 	sortContexts: sorter,
 	...hinter,
 	...io,
-	exit: () => Deno.exit()
+	exit: () => Deno.exit(),
 });
 
-export const createL2Config = async (fxs: Parameters<typeof implCreateHint>[0]) =>
-modifiable({
-		...await implCreateHint(fxs),
-		...implMarkUserAnswer,
-		...implRenderCommands([["k", "mark known"], ["x", "exit"], [
-			"r",
-			"remove sentence",
-		]]),
-		...implRenderCue,
-		...implRenderFeedback,
-		...implRenderInstruction,
+export const createL2Config = async (
+	fxs: Parameters<typeof implCreateHint>[0],
+) => modifiable({
+	...await implCreateHint(fxs),
+	...implMarkUserAnswer,
+	...implRenderCommands([
+		["k", "mark known"],
+		["x", "exit"],
+		["r", "remove sentence"],
+		["has", "check if the sentence has a word, i.e !has noche"],
+	]),
+	...implRenderCue,
+	...implRenderFeedback,
+	...implRenderInstruction,
+});
+
+type Depromisify<T> = T extends Promise<infer K> ? K : never;
+
+export type LangwitchConfig = {
+	0: {
+		conceptsFile: string;
+		sentencesFile: string;
+		binariesFolder: string;
+	};
+	1?: Parameters<typeof L1Config.modify>[0];
+	2?: Parameters<Depromisify<ReturnType<typeof createL2Config>>["modify"]>[0];
+	3?: (a0: typeof LangwitchMachine) => MachineWrapper<any, any>;
+};
+
+export const startLangwitch = async (cfg: LangwitchConfig) => {
+	const L0 = await createL0Config(cfg[0]);
+	const L1 = cfg[1] ? L1Config.modify(cfg[1]) : L1Config;
+
+	// L2 builds on L1. It mostly describes how to render higher-level components
+	// e.g displaying hints, what instruction to display, etc.
+	// This is where you'd override something like how the hinting works, or what commands are displayed.
+
+	const L2 = await createL2Config(L1.get()).then((c) =>
+		cfg[2] ? c.modify(cfg[2]) : c
+	);
+
+	// L3 is the highest level. It describes LW's control-flow:
+	// e.g quiz -> mark the answer
+	// mark the answer -> process the scores
+	// etc.
+	// Here, you'd be adding new commands, running side-effects like text-to-speech, and so on.
+
+	const L3 = cfg[3] ? cfg[3](LangwitchMachine).get() : LangwitchMachine.get();
+
+	await initialiseLangwitch(L3).run({
+		...L0.get(),
+		...L1.get(),
+		...L2.get(),
 	});
-
-// DONE: try putting it all together, see what's missing
-// TODO: Provide at least five examples of modifying Langwitch
-// maybe use immer instead of revisable?
-// TODO: Make adding the command stuff optional
-/*
-
-export const makePhases = async (fxs: ReturnType<typeof phases>["contents"]) => revisable({
-	mark: await Mark(isLanguageMetadata).run(fxs),
-	quiz: await Quiz(isLanguageMetadata).run({ ...visuals, ...time, ...params, ...fxs }),
-	showFeedback: await Feedback(isLanguageMetadata).run(fxs),
-	interpret: (
-		m: Message<{
-			userAnswer: string;
-		}, State>,
-	) => m,
-})
-
-*/
+};

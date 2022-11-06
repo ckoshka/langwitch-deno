@@ -22,7 +22,7 @@ import fx from "./io.ts";
 // params: "translation", show front back + answer? displaying scores
 
 export type RenderFeedbackEffect<T> = {
-	renderFeedback: (metadata: T) => (results: [string, number][]) => Component;
+	renderFeedback: (metadata: T) => (data: ToProcess) => Component;
 };
 
 export const showScores = (results: [string, number][]) =>
@@ -35,14 +35,17 @@ export const showScores = (results: [string, number][]) =>
 
 export const implRenderFeedback: RenderFeedbackEffect<LanguageMetadata> = {
 	renderFeedback: (metadata) =>
-		(results) => [
+		(data) => [
 			Cls,
 			Br,
 			["primary", "(❀ˆᴗˆ) my translation is:"],
 			["secondary underlined", metadata.front],
 			["secondary underlined", metadata.back],
 			Br,
-			...showScores(results),
+			["primary", "(❀ˆᴗˆ) yours was:"],
+			["secondary bold", data.userAnswer],
+			Br,
+			...showScores(data.results),
 			Br,
 		],
 };
@@ -58,7 +61,7 @@ export default <T>(validatorFn: (a0: unknown) => a0 is T) =>
 				const metadata = m.state.queue[0].metadata;
 				if (validatorFn(metadata)) {
 					Rem.pipe(
-						fx.renderFeedback(metadata)(m.data.results),
+						fx.renderFeedback(metadata)(m.data),
 						fx.print,
 					);
 					await fx.ask("press enter to continue");

@@ -11,20 +11,20 @@ export default (keyBinding = "!k") => useMarkers.map2((fx) =>
 	async (
 		m: Message<ToMark, State>,
 	) => {
-		if (!isMatching({ data: { answer: keyBinding } }, m)) {
-			return m;
+		if (m.data?.userAnswer?.toLowerCase().trim().startsWith(keyBinding)) {
+			const newState = await markKnown(m.state).run(fx);
+
+			return <Message<ToProcess, State>> {
+				data: {
+					results: [],
+					userAnswer: "",
+				},
+				state: newState,
+				next: "process", // bifurcating output is a problem for chaining
+			}
 		}
 
-		const newState = await markKnown(m.state).run(fx);
-
-		return <Message<ToProcess, State>> {
-			data: {
-				results: [],
-				userAnswer: "",
-			},
-			state: newState,
-			next: "process", // bifurcating output is a problem for chaining
-		} as never;
+		return m;
 	}
 );
 

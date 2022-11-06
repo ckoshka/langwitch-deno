@@ -1,12 +1,15 @@
-import { BaseContext, int } from "./deps.ts";
+import { BaseContext, Comlink, int } from "./deps.ts";
 import { Hasher } from "./hashing.ts";
-import { createWorker, CtxWorker } from "./worker.ts";
+import { CtxWorker } from "./worker.ts";
 
-export const ContextHolder = (ctxs: BaseContext[]) => {
+export const ContextHolder = async (ctxs: BaseContext[]) => {
 	const hasher = Hasher(true);
-	const worker = createWorker();
+	const w1 = new Worker(new URL("./worker.ts", import.meta.url), {
+        type: "module",
+    });
+	const worker = Comlink.wrap<CtxWorker>(w1);
 
-	worker.add(
+	await worker.add(
 		ctxs.map((c) => ({
 			id: c.id,
 			unknowns: new Set(c.concepts.map(hasher.hash)),
@@ -14,17 +17,17 @@ export const ContextHolder = (ctxs: BaseContext[]) => {
 	);
 
 	return {
-		getNextConcepts: (
+		getNextConcepts: async (
 			knownsIterable: Iterable<string>,
 			n: number,
-		): Set<string> => {
+		): Promise<Set<string>> => {
 			const knowsAsInts = new Set(
 				Array.from(knownsIterable).map(hasher.hash),
 			);
 
-			const topN1s = worker.getNext(knowsAsInts, n * 2).filter((x) =>
+			const topN1s = await worker.getNext(knowsAsInts, n * 2).then(xs => xs.filter((x) =>
 				!knowsAsInts.has(x)
-			);
+			));
 			//.then((xs) => xs.map(hasher.unhash))
 			//.then((xs) => xs.sort((a, b) => a.length - b.length))
 			//.then((xs) => xs.map(hasher.hash));
@@ -48,7 +51,7 @@ export const ContextHolder = (ctxs: BaseContext[]) => {
 			focus: Iterable<string>,
 			maxLen = 1,
 		): Promise<Array<int>> => {
-			const ids = worker.hasFocusConcepts(
+			const ids = await worker.hasFocusConcepts(
 				new Set(Array.from(knowns).map(hasher.hash)),
 				Array.from(focus).map(hasher.hash),
 				maxLen,
@@ -59,14 +62,14 @@ export const ContextHolder = (ctxs: BaseContext[]) => {
 				.map((i) => i.id);
 		},
 
-		onlyKnown: (knowns: Iterable<string>) => {
-			return worker.allKnown(
+		onlyKnown: async (knowns: Iterable<string>) => {
+			return await worker.allKnown(
 				new Set(Array.from(knowns).map(hasher.hash)),
 			);
 		},
 
-		shutdown: () => {
-			worker.emptySelf();
+		shutdown: async () => {
+			await worker.emptySelf();
 		},
 	};
 };

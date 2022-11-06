@@ -21,3 +21,5 @@ export const MachineWrapper = <F, D>(machine: Free<Machine<State>, F, D>) => {
 		get: () => machine,
 	};
 };
+
+export type MachineWrapper<F, D> = ReturnType<typeof MachineWrapper<F, D>>;
