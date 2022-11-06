@@ -30,7 +30,7 @@ await startLangwitch({
 		// We want to read in our concepts from here:
 		conceptsFile: `langwitch-home/concepts/venetian.json`,
 		// And our sentences from this file
-		sentencesFile: `langwitch-home/data/venetian`,
+		sentencesFiles: [`langwitch-home/data/english-venetian-diverse_abbreviated-ord3-nllb-600m-2022.tsv`, `langwitch-home/data/english-venetian-engmin-ord3-nllb-600m-2022.tsv`, `langwitch-home/data/english-venetian-minimal_sentences-ord3-nllb-600m-2022.tsv`, `langwitch-home/data/english-venetian-wikipedia_abbreviated-ord3-nllb-600m-2022.tsv`],
 		// And lastly, we tell LW where the binaries are for heavy-duty preprocessing
 		binariesFolder:
 			`/Users/ckoshka/programming/rust-experiments/everything/target/release`,

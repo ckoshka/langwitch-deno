@@ -1,6 +1,7 @@
-import { BaseContext, Revisable, revisable } from "./deps.ts";
+import { BaseContext, int, Revisable, revisable } from "./deps.ts";
 import { ContextHolder } from "./context_holder.ts";
 import { ConceptQueryEffect, ContextQueryEffect, Free } from "./deps.ts";
+import { LanguageMetadata } from "../../state-transformers/mod.ts";
 
 export const initJsQuerier = async (ctxs: (BaseContext)[]): Promise<
 	ContextQueryEffect & ConceptQueryEffect

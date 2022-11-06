@@ -42,9 +42,9 @@ const worker = {
 			.sort((a, b) => freq(b) - freq(a))
 			.slice(0, n);
 
-		if (result.length === 0) {
-			throw new AllContextsExhausted();
-		}
+		//if (result.length === 0) {
+		//	throw new AllContextsExhausted();
+		//}
 		return result;
 	},
 

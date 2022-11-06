@@ -76,15 +76,15 @@ export const initialiseLangwitch = <F, D>(lw: Free<Machine<State>, F, D>) =>
 		);
 
 export const createL0Config = async (
-	{ conceptsFile, sentencesFile, binariesFolder }: {
+	{ conceptsFile, sentencesFiles, binariesFolder }: {
 		conceptsFile: string;
-		sentencesFile: string;
+		sentencesFiles: string[];
 		binariesFolder: string;
 	},
 ) => modifiable({
 	...conceptLoader(conceptsFile),
 	...await backend({
-		sentencesFile,
+		sentencesFiles,
 		filterCtxs: (ctxs) => filterContexts(ctxs, (c) => c),
 		knownWords: await conceptLoader(conceptsFile).loadConcepts().then(
 			Object.keys,
@@ -131,7 +131,7 @@ type Depromisify<T> = T extends Promise<infer K> ? K : never;
 export type LangwitchConfig = {
 	0: {
 		conceptsFile: string;
-		sentencesFile: string;
+		sentencesFiles: string[];
 		binariesFolder: string;
 	};
 	1?: Parameters<typeof L1Config.modify>[0];
@@ -163,5 +163,5 @@ export const startLangwitch = async (cfg: LangwitchConfig) => {
 		...L0.get(),
 		...L1.get(),
 		...L2.get(),
-	});
+	}).catch(console.error);
 };

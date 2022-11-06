@@ -1,4 +1,5 @@
 import { initialiseMixedBackend } from "../../../backends/mixed/mod.ts";
+import { mergeMultipleBackends } from "../../../backends/pure_typescript/impl_next_contexts.ts";
 import { implFileSystem } from "../../../io_effects/mod.ts";
 
 type Filename = string;
@@ -6,7 +7,7 @@ type Word = string;
 type LeftColumn = string;
 type RightColumn = string;
 export type BackendArgs = {
-	sentencesFile: Filename;
+	sentencesFiles: Filename[];
 	filterCtxs: (
 		ctxs: [LeftColumn, RightColumn][],
 	) => [LeftColumn, RightColumn][];
@@ -29,22 +30,24 @@ const { sentencesFile, filterCtxs, knownWords, binariesFolder } =
 */
 
 export default (
-	{ sentencesFile, filterCtxs, knownWords, binariesFolder }: BackendArgs,
-) => initialiseMixedBackend.run({
-	backend: {
-		sentencesFile,
-		desiredWords: [],
-		maximumWordsToQueue: 25,
-		wordlistMaximumIterSteps: 15,
-		knownWords,
-		filterCtxs,
-		eachWordCallback: (c) => console.log(c),
-	},
-	bins: {
-		dicer: `${binariesFolder}/dicer`,
-		encoder: `${binariesFolder}/langwitch_encode`,
-		frequencyChecker: `${binariesFolder}/frqcheck_opt`,
-		wordlist: `${binariesFolder}/wordlist`,
-	},
-	...implFileSystem,
-});
+	{ sentencesFiles, filterCtxs, knownWords, binariesFolder }: BackendArgs,
+) => Promise.all(sentencesFiles.map((file) =>
+	initialiseMixedBackend.run({
+		backend: {
+			sentencesFile: file,
+			desiredWords: [],
+			maximumWordsToQueue: 25,
+			wordlistMaximumIterSteps: 15,
+			knownWords,
+			filterCtxs,
+			eachWordCallback: (c) => console.log(c),
+		},
+		bins: {
+			dicer: `${binariesFolder}/dicer`,
+			encoder: `${binariesFolder}/langwitch_encode`,
+			frequencyChecker: `${binariesFolder}/frqcheck_opt`,
+			wordlist: `${binariesFolder}/wordlist`,
+		},
+		...implFileSystem,
+	})
+)).then(mergeMultipleBackends);
