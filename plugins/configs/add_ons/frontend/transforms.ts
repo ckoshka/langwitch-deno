@@ -2,8 +2,6 @@ export type MapUserAnswerEffect = {
 	mapUserAnswer: (sentence: string) => string;
 };
 
-// what if it needs the metadata?
-
 export type MapShownAnswerEffect = {
 	mapShownAnswer: (sentence: string) => string;
 };
@@ -15,6 +13,19 @@ export type MapHintEffect = {
 export type MapReferenceAnswerEffect = {
 	mapReferenceAnswer: (word: string) => string;
 };
+
+const id = <T>(x: T) => x;
+
+export const implStringMappings:
+	& MapUserAnswerEffect
+	& MapShownAnswerEffect
+	& MapHintEffect
+	& MapReferenceAnswerEffect = {
+		mapReferenceAnswer: id,
+		mapHint: id,
+		mapShownAnswer: id,
+		mapUserAnswer: id,
+	};
 
 // this would almost certainly be a L1 thing, because the higher-level effects depend on them.
 // these two are heavily co-dependent, bcs we don't want the hint to be different from the shown answer

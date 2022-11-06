@@ -31,6 +31,7 @@ import io from "./add_ons/frontend/io.ts";
 import {
 	default as Mark,
 	implMarkUserAnswer,
+implMeasurePartialSimilarity,
 } from "./add_ons/frontend/mark.ts";
 import Process from "./add_ons/frontend/process.ts";
 import {
@@ -41,6 +42,7 @@ import {
 	implRenderHint,
 	implRenderInstruction,
 } from "./add_ons/frontend/quiz.ts";
+import { implStringMappings } from "./add_ons/frontend/transforms.ts";
 import { isLanguageMetadata, MachineWrapper } from "./shared/mod.ts";
 
 const createState = use<LoadConceptsEffect>()
@@ -130,6 +132,8 @@ export const L1Config = modifiable({
 	...filterConcepts,
 	...hinter,
 	...io,
+	...implStringMappings,
+	...implMeasurePartialSimilarity,
 	exit: () => Deno.exit(),
 });
 
@@ -137,7 +141,7 @@ export const createL2Config = async (
 	fxs: ReturnType<typeof L1Config["get"]>,
 ) => modifiable({
 	...await implCreateHintMap(fxs),
-	...implRenderHint,
+	...implRenderHint(fxs),
 	...implMarkUserAnswer(fxs),
 	...implRenderCommands([
 		["k", "mark known"],
@@ -146,7 +150,7 @@ export const createL2Config = async (
 		["has", "check if the sentence has a word, i.e !has noche"],
 	]),
 	...implRenderCue,
-	...implRenderFeedback,
+	...implRenderFeedback(fxs),
 	...implRenderInstruction,
 	sortContexts: (state: State) => (ctxs: BaseContext[]) =>
 		sorter(state)(ctxs).run(fxs),
