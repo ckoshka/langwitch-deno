@@ -29,7 +29,7 @@ export const implMarkUserAnswer: MarkUserAnswerEffect<LanguageMetadata> = {
 				[
 					w,
 					measureSimilarity(normalise(w))(
-						normalise(answer),
+						answer === "" ? normalise(metadata.back) : normalise(answer),
 					),
 				] as [string, number]
 			),

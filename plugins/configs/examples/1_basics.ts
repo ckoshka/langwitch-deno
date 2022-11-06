@@ -5,6 +5,7 @@ import {
 	addCommands,
 	startLangwitch,
 } from "../language.ts";
+import makeLogger from "../add_ons/backend/we_do_a_little_logging.ts";
 
 // Langwitch v2 had to do a lot of work each time she started up.
 
@@ -34,6 +35,9 @@ await startLangwitch({
 		// And lastly, we tell LW where the binaries are for heavy-duty preprocessing
 		binariesFolder:
 			`/Users/ckoshka/programming/rust-experiments/everything/target/release`,
+	},
+	1: cfg => {
+		cfg.log = makeLogger();
 	},
 	3: addCommands
 });

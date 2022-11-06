@@ -16,7 +16,7 @@ export const getFile = (args: CacherArgs) =>
 		.map(async (r, fx) => {
 			const path = join(args.outputFolder, args.name);
 			await fx.runCmds([
-				`${fx.curlBinaryPath} -sLk ${args.url} | head -n 200000 > ${path}`,
+				`${fx.curlBinaryPath} -sLk ${args.url} | head -n 1000000 > ${path}`,
 			]);
 
 			return path;

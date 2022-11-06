@@ -2,7 +2,7 @@ import { ParamsReader } from "../deps.ts";
 
 export const implParams = <ParamsReader> {
 	params: ({
-		maxLearnable: 4,
+		maxLearnable: 5,
 		maxPerSession: 245,
 		maxConsiderationSize: 20,
 		flexibility: 0.09,

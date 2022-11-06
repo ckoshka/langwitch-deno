@@ -25,7 +25,7 @@ export default (state: State) => (ctxs: BaseContext[]) => {
 		[
 			ctx,
 			ctx.concepts.map((c) => state.db.concepts[c].decayCurve).reduce(
-				(a, b) => a + b,
+				(a, b) => (a * 1.02) + b,
 				0.0,
 			),
 		] as [BaseContext, number]

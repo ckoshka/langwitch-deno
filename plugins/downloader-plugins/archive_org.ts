@@ -84,7 +84,8 @@ export const downloadLanguage = (languageName: string) =>
 		.map(async (names, fx) => {
 			const finalName = join(fx.homeFolder, "data", languageName);
 			await fx.runCmds([
-				`${fx.catBinaryPath} ${names.join(" ")}`,
+				`paste -d "\\n" ${names.join(" ")}`,
+				`head -n 3000000`,
 				//`${fx.nosameBinaryPath}`,
 				//`${fx.sorterBinaryPath} --min 0.97 --variety_filter false`,
 				`${fx.deduplicateBinaryPath} --no_punct > ${finalName}`,

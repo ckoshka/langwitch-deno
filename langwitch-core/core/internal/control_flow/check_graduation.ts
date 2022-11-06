@@ -1,4 +1,5 @@
 import {
+BaseContext,
 	Concept,
 	ConceptFilterEffect,
 	CoreEffects,
@@ -67,36 +68,43 @@ export const checkGraduation = (s1: State) =>
 				{ knowns: known, total: cfg.maxConsiderationSize },
 			);
 
-			const nextIds = {
-				learning: [
-					...learning,
-					...f.filterConcepts(
-						[...ids],
-						f.params.maxLearnable - learning.size,
-					),
-				],
-			};
+			const orderedByGoodness = f.filterConcepts(
+				[...ids],
+				ids.size,
+			);
 
-			return updateDbWithNew(s1.db.concepts)(nextIds.learning).map(
-				(updates) => ({ updates, ...nextIds }),
+			let queueOfNewItems: BaseContext[] = [];
+			let i = f.params.maxLearnable - learning.size;
+			const proposedForLearning = new Set(Array.from(learning).concat(orderedByGoodness.slice(0, Math.max(0, i))));
+			// question: are there any cases where maxLearnable - learning.size = 0?
+			// which would cause it to wrap around...
+
+			const currentItemsInQueueById = new Set(
+				s1.queue.map((i) => i.id),
+			);
+
+			while (queueOfNewItems.length === 0 && i <= orderedByGoodness.length) {
+				proposedForLearning.add(orderedByGoodness[i]);
+				const proposedQueue = await f.nextContexts(
+					{ knowns: known, focus: proposedForLearning },
+				);
+				const notInQueueAlready = proposedQueue.filter((ctx) => !currentItemsInQueueById.has(ctx.id));
+				queueOfNewItems = queueOfNewItems.concat(notInQueueAlready);
+				notInQueueAlready.forEach(ctx => currentItemsInQueueById.add(ctx.id));
+				i++;
+			}
+
+
+
+			return updateDbWithNew(s1.db.concepts)(proposedForLearning).map(
+				(updates) => ({ updates }),
 			)
-				.map(async (rec) => ({
-					queue: await f.nextContexts(
-						{ knowns: known, focus: new Set(rec.learning) },
-					),
-					...rec,
-				}))
 				.map((rec) => {
-					const existingIds = new Set(
-						s1.queue.map((i) => i.id),
-					);
-
 					return {
 						...rec,
-						queue: rec.queue
-							.filter((ctx) => !existingIds.has(ctx.id)).concat(
+						queue: queueOfNewItems.concat(
 								s1.queue.slice(
-									Math.floor(rec.queue.length / 2),
+									Math.floor(queueOfNewItems.length / 2),
 								),
 							).filter((c) => c !== undefined),
 					};
@@ -119,7 +127,7 @@ export const checkGraduation = (s1: State) =>
 						},
 						known: Array.from(known),
 						queue: rec.queue,
-						learning: Array.from(rec.learning),
+						learning: Array.from(proposedForLearning),
 					};
 
 					f.log(s2);
