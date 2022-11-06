@@ -19,6 +19,7 @@ import {
 } from "../../../state-transformers/mod.ts";
 import { isLanguageMetadata } from "../../shared/mod.ts";
 import fx from "./io.ts";
+import { MapShownAnswerEffect, MapUserAnswerEffect } from "./transforms.ts";
 
 // params: "translation", show front back + answer? displaying scores
 
@@ -34,22 +35,28 @@ export const showScores = (results: [string, number][]) =>
 		`${concept} ➤ ${Math.round(score * 100)}`,
 	] as Line);
 
-export const implRenderFeedback: RenderFeedbackEffect<LanguageMetadata> = {
-	renderFeedback: (metadata) =>
-		(data) => [
-			Cls,
-			Br,
-			["primary", "(❀ˆᴗˆ) my translation is:"],
-			["secondary italic", `${metadata.front}`],
-			["secondary bold", `${metadata.back}`],
-			Br,
-			["primary", "(❀ˆᴗˆ) yours was:"],
-			["secondary bold", data.userAnswer.length > 0 ? data.userAnswer : " "],
-			Br,
-			...showScores(data.results),
-			Br,
+export const implRenderFeedback = (
+	fx: MapShownAnswerEffect & MapUserAnswerEffect,
+): RenderFeedbackEffect<LanguageMetadata> => ({
+	renderFeedback: (metadata) => (data) => [
+		Cls,
+		Br,
+		["primary", "(❀ˆᴗˆ) my translation is:"],
+		["secondary italic", `${metadata.front}`],
+		["secondary bold", `${fx.mapShownAnswer(metadata.back)}`],
+		Br,
+		["primary", "(❀ˆᴗˆ) yours was:"],
+		[
+			"secondary bold",
+			fx.mapUserAnswer(
+				data.userAnswer.length > 0 ? data.userAnswer : " ",
+			),
 		],
-};
+		Br,
+		...showScores(data.results),
+		Br,
+	],
+});
 
 export default <T>(validatorFn: (a0: unknown) => a0 is T) =>
 	use<
@@ -57,7 +64,8 @@ export default <T>(validatorFn: (a0: unknown) => a0 is T) =>
 		& UserInputEffect<Promise<string>>
 		& RenderFeedbackEffect<T>
 	>()
-		.map2((fx) =>
+		.map2(
+			(fx) =>
 			async (m: Message<ToProcess, State>): Promise<LangwitchMessage> => {
 				const metadata = m.state.queue[0].metadata;
 				if (validatorFn(metadata)) {
@@ -66,10 +74,10 @@ export default <T>(validatorFn: (a0: unknown) => a0 is T) =>
 						fx.print,
 					);
 					await fx.ask("press enter to continue");
-					return revisable(m).revise({next: "process"}).contents;
+					return revisable(m).revise({ next: "process" }).contents;
 				}
 				return m;
-			}
+			},
 		);
 // this could be generalised to
 // - take a fn that

@@ -5,6 +5,7 @@ import {
 	Concept,
 	ConceptName,
 	EffectsOf,
+	HiderEffect,
 	Input,
 	Line,
 	revisable,
@@ -23,12 +24,32 @@ import {
 	importDefault,
 	isLanguageMetadata,
 } from "../../shared/mod.ts";
+import { MapHintEffect } from "./transforms.ts";
 
 // params: how to hint, what metadata:
 // check if right metadata, what instructions, what cue, what commands
 
+export type CreateHintMap<Meta> = {
+	createHintMap: (state: State) => (metadata: Meta) => number[];
+};
+
 export type RenderHintEffect<Meta> = {
-	renderHint: (state: State) => (metadata: Meta) => string;
+	renderHint: (
+		metadata: Meta,
+	) => (numLettersShownForEachWord: number[]) => string;
+};
+
+export const implRenderHint = (
+	{ hider, mapHint }: HiderEffect & MapHintEffect,
+): RenderHintEffect<LanguageMetadata> => {
+	return {
+		renderHint: (meta) => (lettersShown) =>
+			mapHint(meta.words).map((word, i) =>
+				hider.show(lettersShown[i])(meta.words[i])
+			)
+				.map((hint) => `${hint} (${hint.length})`)
+				.join(" "),
+	};
 };
 
 export type RenderCueEffect<Meta> = {
@@ -41,23 +62,25 @@ export type RenderCommandsEffect = {
 
 export type RenderInstructionEffect<T> = {
 	renderInstruction: () => Component;
-}
-
-export const implRenderInstruction: RenderInstructionEffect<LanguageMetadata> = {
-	renderInstruction: () => [["tertiary", "try translating this sentence!"]]
-}
-
-export const implRenderCue: RenderCueEffect<LanguageMetadata> = {
-	renderCue: (meta) => [["primary italic solid", `  ${meta.front}  `]]
 };
 
-export const implCreateHint = async (
+export const implRenderInstruction: RenderInstructionEffect<LanguageMetadata> =
+	{
+		renderInstruction:
+			() => [["tertiary", "try translating this sentence!"]],
+	};
+
+export const implRenderCue: RenderCueEffect<LanguageMetadata> = {
+	renderCue: (meta) => [["primary italic solid", `  ${meta.front}  `]],
+};
+
+export const implCreateHintMap = async (
 	fx: EffectsOf<ReturnType<typeof makeHint>>,
-): Promise<RenderHintEffect<LanguageMetadata>> => {
+): Promise<CreateHintMap<LanguageMetadata>> => {
 	const fn = await makeHint().run(fx);
 	return {
-		renderHint: (state) =>
-			(meta) => fn((word) => state.db.concepts[word])(
+		createHintMap: (state) => (meta) =>
+			fn((word) => state.db.concepts[word])(
 				meta.words,
 			),
 	};
@@ -76,17 +99,19 @@ export const implRenderCommands = (
 		),
 });
 
-export default <T>(validatorFn: (a0: unknown) => a0 is T) => use<
-	& PrinterEffect
-	& UserInputEffect<Promise<string>>
-	& RenderHintEffect<T>
-	& RenderCueEffect<T>
-	& RenderCommandsEffect
-	& RenderInstructionEffect<T>
->()
-	.chain(makeHint)
-	.map(
-		(hinter, fx) =>
+export default <T>(validatorFn: (a0: unknown) => a0 is T) =>
+	use<
+		& PrinterEffect
+		& UserInputEffect<Promise<string>>
+		& RenderHintEffect<T>
+		& RenderCueEffect<T>
+		& RenderCommandsEffect
+		& RenderInstructionEffect<T>
+		& CreateHintMap<T>
+	>()
+		.chain(makeHint)
+		.map(
+			(hinter, fx) =>
 			async (m: LangwitchMessage): Promise<LangwitchMessage> => {
 				const meta = m.state.queue[0].metadata;
 
@@ -101,7 +126,11 @@ export default <T>(validatorFn: (a0: unknown) => a0 is T) => use<
 						Br,
 						[
 							"primary 80",
-							`♡♡ hint: ${fx.renderHint(m.state)(meta)}`,
+							`♡♡ hint: ${
+								fx.renderHint(meta)(
+									fx.createHintMap(m.state)(meta),
+								)
+							}`,
 						],
 						Br,
 						...fx.renderCommands(),
@@ -118,6 +147,6 @@ export default <T>(validatorFn: (a0: unknown) => a0 is T) => use<
 				}
 				return m;
 			},
-	);
+		);
 // this could be generalised to
 // (Metadata, CommandsList, Hint, Instruction) -> Component

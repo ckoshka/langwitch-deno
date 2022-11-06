@@ -1,12 +1,13 @@
-import { Concept,Message,State,use } from "../../../deps.ts";
+import { Concept, Message, State, use } from "../../../deps.ts";
 
 export type SaveConceptsEffect = {
 	saveConcepts: (concepts: Concept[]) => void;
 };
 
-export default 
-	use<SaveConceptsEffect>()
-		.map2((fx) => <T>(m: Message<T, State>) => {
-			fx.saveConcepts(Object.values(m.state.db.concepts).filter(c => c.timesSeen >= 3));
-			return m;
-		});
+export default use<SaveConceptsEffect>()
+	.map2((fx) => <T>(m: Message<T, State>) => {
+		fx.saveConcepts(
+			Object.values(m.state.db.concepts).filter((c) => c.timesSeen >= 3),
+		);
+		return m;
+	});

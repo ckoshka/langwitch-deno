@@ -8,7 +8,8 @@ export const makeRecord = <T>(via: (a0: T) => string) => (data: T[]) => {
 
 export const modifiable = <T>(item: T) => {
 	return {
-		modify: (draft: (a0: T) => void | T) => modifiable(produce(item, draft)),
-		get: () => item
-	}
-}
+		modify: (draft: (a0: T) => void | T) =>
+			modifiable(produce(item, draft)),
+		get: () => item,
+	};
+};

@@ -5,8 +5,8 @@ import { CtxWorker } from "./worker.ts";
 export const ContextHolder = async (ctxs: BaseContext[]) => {
 	const hasher = Hasher(true);
 	const w1 = new Worker(new URL("./worker.ts", import.meta.url), {
-        type: "module",
-    });
+		type: "module",
+	});
 	const worker = Comlink.wrap<CtxWorker>(w1);
 
 	await worker.add(
@@ -25,9 +25,9 @@ export const ContextHolder = async (ctxs: BaseContext[]) => {
 				Array.from(knownsIterable).map(hasher.hash),
 			);
 
-			const topN1s = await worker.getNext(knowsAsInts, n * 4).then(xs => xs.filter((x) =>
-				!knowsAsInts.has(x)
-			));
+			const topN1s = await worker.getNext(knowsAsInts, n * 4).then((xs) =>
+				xs.filter((x) => !knowsAsInts.has(x))
+			);
 			//.then((xs) => xs.map(hasher.unhash))
 			//.then((xs) => xs.sort((a, b) => a.length - b.length))
 			//.then((xs) => xs.map(hasher.hash));

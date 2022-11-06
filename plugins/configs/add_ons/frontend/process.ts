@@ -15,7 +15,8 @@ export type NextStateEffects = EffectsOf<
 
 export default use<NextStateEffects>().map2((
 	fx,
-) => async (m: Message<ToProcess, State>) =>
+) =>
+async (m: Message<ToProcess, State>) =>
 	revisable(m).revise({
 		state: await nextState(m.state)(m.data.results as MarkedResult)
 			.run(fx),

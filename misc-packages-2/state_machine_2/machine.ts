@@ -40,7 +40,7 @@ export const Machine = <State>(
 			let currData = data;
 			for (;;) {
 				if (!states[nextState]) {
-					throw `I don't have a state handler for ${nextState}`
+					throw `I don't have a state handler for ${nextState}`;
 				}
 				const packet = await states[nextState](currData);
 				nextState = packet.next;
@@ -53,4 +53,4 @@ export const Machine = <State>(
 	};
 };
 
-export type Machine<State> = ReturnType<typeof Machine<State>>
+export type Machine<State> = ReturnType<typeof Machine<State>>;

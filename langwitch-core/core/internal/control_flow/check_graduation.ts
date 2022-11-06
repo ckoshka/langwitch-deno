@@ -1,5 +1,5 @@
 import {
-BaseContext,
+	BaseContext,
 	Concept,
 	ConceptFilterEffect,
 	CoreEffects,
@@ -74,31 +74,39 @@ export const checkGraduation = (s1: State) =>
 			);
 
 			let queueOfNewItems: BaseContext[] = [];
-			let i = Math.max(f.params.maxLearnable - learning.size, graduatedIds.length, 0);
-			const proposedForLearning = new Set(Array.from(learning).concat(orderedByGoodness.slice(0, i)));
+			let i = Math.max(
+				f.params.maxLearnable - learning.size,
+				graduatedIds.length,
+				0,
+			);
+			const proposedForLearning = new Set(
+				Array.from(learning).concat(orderedByGoodness.slice(0, i)),
+			);
 			// question: are there any cases where maxLearnable - learning.size = 0?
 			// which would cause it to wrap around...
 
 			const currentItemsInQueueById = new Set(
 				s1.queue.map((i) => i.id),
-			); 
+			);
 
-			while (queueOfNewItems.length === 0 && i <= orderedByGoodness.length) {
+			while (
+				queueOfNewItems.length === 0 && i <= orderedByGoodness.length
+			) {
 				proposedForLearning.add(orderedByGoodness[i]);
 				const proposedQueue = await f.nextContexts(
 					{ knowns: known, focus: proposedForLearning },
 				);
-				const notInQueueAlready = proposedQueue.filter((ctx) => !currentItemsInQueueById.has(ctx.id));
-				notInQueueAlready.forEach(ctx => {
+				const notInQueueAlready = proposedQueue.filter((ctx) =>
+					!currentItemsInQueueById.has(ctx.id)
+				);
+				notInQueueAlready.forEach((ctx) => {
 					if (!currentItemsInQueueById.has(ctx.id)) {
 						currentItemsInQueueById.add(ctx.id);
 						queueOfNewItems.push(ctx);
 					}
-				})
+				});
 				i++;
 			}
-
-
 
 			return updateDbWithNew(s1.db.concepts)(proposedForLearning).map(
 				(updates) => ({ updates }),
@@ -107,10 +115,10 @@ export const checkGraduation = (s1: State) =>
 					return {
 						...rec,
 						queue: queueOfNewItems.concat(
-								s1.queue.slice(
-									Math.floor(queueOfNewItems.length / 2),
-								),
-							).filter((c) => c !== undefined),
+							s1.queue.slice(
+								Math.floor(queueOfNewItems.length / 2),
+							),
+						).filter((c) => c !== undefined),
 					};
 				})
 				.map((rec) => {

@@ -26,13 +26,12 @@ import makeLogger from "../add_ons/backend/we_do_a_little_logging.ts";
 await startLangwitch({
 	0: {
 		// We want to read in our concepts from here:
-		conceptsFile: `langwitch-home/concepts/portuguese.json`,
+		conceptsFile: `langwitch-home/concepts/venetian.json`,
 		// And our sentences from these files
 		sentencesFiles: [
-			`langwitch-home/data/portuguese_aa`,
-			`langwitch-home/data/portuguese_ab`,
-			`langwitch-home/data/portuguese_ac`,
-			`langwitch-home/data/portuguese_ad`,
+			`langwitch-home/data/english-venetian-engmin-ord3-nllb-600m-2022.tsv`,
+			`langwitch-home/data/english-venetian-minimal_sentences-ord3-nllb-600m-2022.tsv`,
+			`langwitch-home/data/english-venetian-wikipedia_abbreviated-ord3-nllb-600m-2022.tsv`,
 		],
 		// And lastly, we tell LW where the binaries are for heavy-duty preprocessing
 		binariesFolder:

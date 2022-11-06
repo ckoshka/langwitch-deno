@@ -14,28 +14,27 @@ import {
 
 export default (keyBinding = "!k") =>
 	useMarkers.map2((fx) =>
-		async (
-			m: LangwitchMessage,
-		) => {
-			if (
-				m.data?.userAnswer?.toLowerCase().trim().startsWith(keyBinding)
-			) {
-				const newState = await markKnown(m.state).run(fx);
+	async (
+		m: LangwitchMessage,
+	) => {
+		if (
+			m.data?.userAnswer?.toLowerCase().trim().startsWith(keyBinding)
+		) {
+			const newState = await markKnown(m.state).run(fx);
 
-				return revisable(m)
-					.revise({
-						state: newState,
-						next: "process",
-						data: {
-							results: [],
-							userAnswer: "",
-						},
-					}).contents;
-			}
-
-			return m;
+			return revisable(m)
+				.revise({
+					state: newState,
+					next: "process",
+					data: {
+						results: [],
+						userAnswer: "",
+					},
+				}).contents;
 		}
-	);
+
+		return m;
+	});
 
 export const markKnown = (state: State) =>
 	useMarkers.map2((fx) =>

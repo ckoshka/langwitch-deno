@@ -54,5 +54,5 @@ await startLangwitch({
 	},
 	1: (cfg) => {
 		cfg.print = (c) => console.log(style(c));
-	}
+	},
 });

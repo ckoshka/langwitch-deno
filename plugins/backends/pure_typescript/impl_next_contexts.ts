@@ -19,15 +19,25 @@ export const initJsQuerier = async (ctxs: (BaseContext)[]): Promise<
 
 // a wrapper for multiple backends?
 
-export const mergeMultipleBackends = (backends: (ContextQueryEffect & ConceptQueryEffect)[]): ContextQueryEffect & ConceptQueryEffect => {
+export const mergeMultipleBackends = (
+	backends: (ContextQueryEffect & ConceptQueryEffect)[],
+): ContextQueryEffect & ConceptQueryEffect => {
 	return {
 		nextConcepts: ({ knowns, total }) =>
-			Promise.all(backends.map(backend => backend.nextConcepts({ knowns, total }))).then(axs => {
+			Promise.all(
+				backends.map((backend) =>
+					backend.nextConcepts({ knowns, total })
+				),
+			).then((axs) => {
 				const s = new Set<string>();
-				axs.forEach(ax => ax.forEach(a => s.add(a)));
+				axs.forEach((ax) => ax.forEach((a) => s.add(a)));
 				return s;
 			}),
 		nextContexts: ({ knowns, focus }) =>
-		Promise.all(backends.map(backend => backend.nextContexts({ knowns, focus }))).then(a => a.flat()),
+			Promise.all(
+				backends.map((backend) =>
+					backend.nextContexts({ knowns, focus })
+				),
+			).then((a) => a.flat()),
 	};
-}
+};

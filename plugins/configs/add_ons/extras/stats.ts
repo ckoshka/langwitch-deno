@@ -2,7 +2,15 @@
 // 15, 30, 50, 75, 100 ?
 // you could use the diff logger, i.e known: -> added new words
 
-import { Message,State,use,Component,Br,Cls, UserInputEffect } from "../../../deps.ts";
+import {
+	Br,
+	Cls,
+	Component,
+	Message,
+	State,
+	use,
+	UserInputEffect,
+} from "../../../deps.ts";
 import { PrinterEffect } from "../../../state-transformers/helpers/effects/mod.ts";
 import { WordsPerHourCalculator } from "../../../stats/words_per_hour/mod.ts";
 
@@ -46,7 +54,8 @@ export default () => {
 	let notNew = true;
 
 	return use<PrinterEffect & UserInputEffect<Promise<string>>>().map2(
-		(fx) => async (
+		(fx) =>
+		async (
 			m: Message<unknown, State>,
 		) => {
 			const newWords = learned.update(m.state.learning);
@@ -72,7 +81,7 @@ export default () => {
 			}
 
 			if (graduatedWords.length > 0 || newWords.length > 0) {
-				await fx.ask("Continue?")
+				await fx.ask("Continue?");
 				return m;
 			}
 			return m;

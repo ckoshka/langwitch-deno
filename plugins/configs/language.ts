@@ -1,12 +1,13 @@
 import { ImmutableMap } from "../../misc-packages-2/state_machine_2/deps.ts";
 import { Machine } from "../../misc-packages-2/state_machine_2/mod.ts";
 import {
-BaseContext,
+	BaseContext,
 	checkGraduation,
 	Concept,
 	Free,
 	modifiable,
 	refresh,
+	Rem,
 	State,
 	updateTopContext,
 	use,
@@ -34,9 +35,10 @@ import {
 import Process from "./add_ons/frontend/process.ts";
 import {
 	default as Quiz,
-	implCreateHint,
+	implCreateHintMap,
 	implRenderCommands,
 	implRenderCue,
+	implRenderHint,
 	implRenderInstruction,
 } from "./add_ons/frontend/quiz.ts";
 import { isLanguageMetadata, MachineWrapper } from "./shared/mod.ts";
@@ -54,16 +56,35 @@ export const LangwitchMachine = MachineWrapper(Free.lift(Machine<State>()))
 	.addF("feedback", Feedback(isLanguageMetadata))
 	.addF("process", Process);
 
+export const addExit = <F, D>(machine: MachineWrapper<F, D>) =>
+	machine.appendF("quiz", Exit("!x"));
 
-export const addCommands = (machine: typeof LangwitchMachine) =>
-	machine.appendF("quiz", Exit("!x"))
-		.appendF("quiz", Known("!k"))
-		.append("quiz", Remove("!r"))
-		.appendF("process", Save)
-		.appendF("process", Stats())
+export const addMarkKnown = <F, D>(machine: MachineWrapper<F, D>) =>
+	machine.appendF("quiz", Known("!k"));
+export const addRemove = <F, D>(machine: MachineWrapper<F, D>) =>
+	machine.append("quiz", Remove("!r"));
+
+export const addSave = <F, D>(machine: MachineWrapper<F, D>) =>
+	machine
+		.appendF("process", Save);
+
+export const addStats = <F, D>(machine: MachineWrapper<F, D>) =>
+	machine
 		.appendF("quiz", Has);
 
+export const addExtraHinter = <F, D>(machine: MachineWrapper<F, D>) =>
+	machine.appendF("quiz", Has);
 
+export const addCommands = <F, D>(machine: MachineWrapper<F, D>) =>
+	Rem.pipe(
+		machine,
+		addExit,
+		addMarkKnown,
+		addRemove,
+		addSave,
+		addStats,
+		addExtraHinter,
+	);
 
 export const initialiseLangwitch = <F, D>(lw: Free<Machine<State>, F, D>) =>
 	lw
@@ -73,7 +94,7 @@ export const initialiseLangwitch = <F, D>(lw: Free<Machine<State>, F, D>) =>
 					data: null,
 					next: "",
 					state: s,
-					map: ImmutableMap()
+					map: ImmutableMap(),
 				})
 			)
 		);
@@ -115,8 +136,9 @@ export const L1Config = modifiable({
 export const createL2Config = async (
 	fxs: ReturnType<typeof L1Config["get"]>,
 ) => modifiable({
-	...await implCreateHint(fxs),
-	...implMarkUserAnswer,
+	...await implCreateHintMap(fxs),
+	...implRenderHint,
+	...implMarkUserAnswer(fxs),
 	...implRenderCommands([
 		["k", "mark known"],
 		["x", "exit"],
@@ -126,7 +148,8 @@ export const createL2Config = async (
 	...implRenderCue,
 	...implRenderFeedback,
 	...implRenderInstruction,
-	sortContexts: (state: State) => (ctxs: BaseContext[]) => sorter(state)(ctxs).run(fxs),
+	sortContexts: (state: State) => (ctxs: BaseContext[]) =>
+		sorter(state)(ctxs).run(fxs),
 });
 
 type Depromisify<T> = T extends Promise<infer K> ? K : never;

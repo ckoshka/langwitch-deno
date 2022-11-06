@@ -17,13 +17,15 @@ export const makeHint = () =>
 		.map(
 			(_, f) =>
 			(find: (a0: ConceptName) => Concept) =>
-			(words: string[]) => {
-				return words
+			(words: string[]) =>
+				words
 					.map((w) => {
 						const concept = find(w as ConceptName);
 						if (!concept) return w.length;
 
-						const { predict } = Mem({ logBase: f.readLogBase });
+						const { predict } = Mem({
+							logBase: f.readLogBase,
+						});
 
 						const proportion = predict({
 							memory: concept,
@@ -39,14 +41,7 @@ export const makeHint = () =>
 								lettersShown,
 							)
 							: lettersShown;
-					})
-					.map(Math.round)
-					.map((lettersShown, position) =>
-						f.hider.show(lettersShown)(words[position])
-					)
-					.map((hint) => `${hint} (${hint.length})`)
-					.join(" ");
-			},
+					}),
 		);
 
 // if concept not found, if some condition, do this, otherwise do this
