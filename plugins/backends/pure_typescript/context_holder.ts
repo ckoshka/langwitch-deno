@@ -1,90 +1,75 @@
-import { BaseContext, int } from "./deps.ts";
+import { BaseContext, Comlink, int } from "./deps.ts";
 import { Hasher } from "./hashing.ts";
-import { createWorker, CtxWorker } from "./worker.ts";
+import { CtxWorker } from "./worker.ts";
 
-// what does a worker thread do effectively?
-// it turns a synchronous function into an asynchronous one by executing it in a different process
-// the details of chunk size should be left to the implementation.
+export const ContextHolder = async (ctxs: BaseContext[]) => {
+	const hasher = Hasher(true);
+	const w1 = new Worker(new URL("./worker.ts", import.meta.url), {
+        type: "module",
+    });
+	const worker = Comlink.wrap<CtxWorker>(w1);
 
-export class ContextHolder {
-	constructor(
-		private workers: Array<CtxWorker> = [],
-		private hasher: Hasher,
-	) {}
-	static async spawn(ctxs: BaseContext[]) {
-		//console.log("Got here")
-		const hasher = Hasher(true);
-		const worker = createWorker();
-		worker.add(
-			ctxs.map((c) => ({
-				id: c.id,
-				unknowns: new Set(c.concepts.map(hasher.hash)),
-			})),
-		);
-		//console.log("Got here");
-		//const freqmap = utils.createFreqMap(ctxs);
-		return new ContextHolder([worker], hasher);
-	}
+	await worker.add(
+		ctxs.map((c) => ({
+			id: c.id,
+			unknowns: new Set(c.concepts.map(hasher.hash)),
+		})),
+	);
 
-	gather<T>(fn: (w: CtxWorker) => T): Promise<T[]> {
-		return Promise.resolve(this.workers.map(fn));
-	}
+	return {
+		getNextConcepts: async (
+			knownsIterable: Iterable<string>,
+			n: number,
+		): Promise<Set<string>> => {
+			const knowsAsInts = new Set(
+				Array.from(knownsIterable).map(hasher.hash),
+			);
 
-	async getNextConcepts(
-		knownsIterable: Iterable<string>,
-		n: number,
-	): Promise<Set<string>> {
-		const knowsAsInts = new Set(
-			Array.from(knownsIterable).map(this.hasher.hash),
-		);
+			const topN1s = await worker.getNext(knowsAsInts, n * 2).then(xs => xs.filter((x) =>
+				!knowsAsInts.has(x)
+			));
+			//.then((xs) => xs.map(hasher.unhash))
+			//.then((xs) => xs.sort((a, b) => a.length - b.length))
+			//.then((xs) => xs.map(hasher.hash));
 
-		const topN1s = await this.gather((w) => w.getNext(knowsAsInts, n * 2))
-			.then((a) => a.flat())
-			.then((xs) => xs.filter((x) => !knowsAsInts.has(x)));
-		//.then((xs) => xs.map(this.hasher.unhash))
-		//.then((xs) => xs.sort((a, b) => a.length - b.length))
-		//.then((xs) => xs.map(this.hasher.hash));
+			// this has to be here because some words are duplicated
 
-		// this has to be here because some words are duplicated
+			const set: Set<string> = new Set();
 
-		const set: Set<string> = new Set();
-
-		for (const item of topN1s) {
-			if (set.size < n && !knowsAsInts.has(item)) {
-				set.add(this.hasher.unhash(item));
-			} else {
-				break;
+			for (const item of topN1s) {
+				if (set.size < n && !knowsAsInts.has(item)) {
+					set.add(hasher.unhash(item));
+				} else {
+					break;
+				}
 			}
-		}
-		return set;
-	}
-	// can be done in parallel, but not in the same way, extract this to a different method. sub and all
+			return set;
+		},
 
-	async getNextContexts(
-		knowns: Iterable<string>,
-		focus: Iterable<string>,
-		maxLen = 1,
-	): Promise<Array<int>> {
-		const ids = await this.gather((w) =>
-			w.hasFocusConcepts(
-				new Set(Array.from(knowns).map(this.hasher.hash)),
-				Array.from(focus).map(this.hasher.hash),
+		getNextContexts: async (
+			knowns: Iterable<string>,
+			focus: Iterable<string>,
+			maxLen = 1,
+		): Promise<Array<int>> => {
+			const ids = await worker.hasFocusConcepts(
+				new Set(Array.from(knowns).map(hasher.hash)),
+				Array.from(focus).map(hasher.hash),
 				maxLen,
-			)
-		);
-		const all = new Set([...knowns, ...focus]);
-		return ids.flat()
-			//.filter(i => Array.from(i.all).map(this.hasher.unhash).filter(x => !all.has(x)).length === 0)
-			.map((i) => i.id);
-	}
+			);
+			//const all = new Set([...knowns, ...focus]);
+			return ids
+				//.filter(i => Array.from(i.all).map(hasher.unhash).filter(x => !all.has(x)).length === 0)
+				.map((i) => i.id);
+		},
 
-	async onlyKnown(knowns: Iterable<string>) {
-		return await this.gather((w) =>
-			w.allKnown(new Set(Array.from(knowns).map(this.hasher.hash)))
-		).then((c) => c.flat());
-	}
+		onlyKnown: async (knowns: Iterable<string>) => {
+			return await worker.allKnown(
+				new Set(Array.from(knowns).map(hasher.hash)),
+			);
+		},
 
-	async shutdown() {
-		await this.gather((w) => w.emptySelf());
-	}
-}
+		shutdown: async () => {
+			await worker.emptySelf();
+		},
+	};
+};

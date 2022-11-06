@@ -121,9 +121,7 @@ export const createMixedBackend = (desiredWords: string[]) =>
 			const reverseMap = new Map(ctxs.map((c) => [c.id, c]));
 
 			const result = {
-				...(await initJsQuerier().run({
-					ctxs,
-				})),
+				...await initJsQuerier(ctxs),
 				getMetadata: (id: int) => reverseMap.get(id)!.metadata,
 			};
 
