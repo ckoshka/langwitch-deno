@@ -14,7 +14,6 @@ export * from "https://cdn.jsdelivr.net/gh/ckoshka/langwitch_hider@latest/mod.ts
 export { Maybe } from "https://cdn.jsdelivr.net/gh/ckoshka/monadder/mod.ts";
 export * from "https://cdn.jsdelivr.net/gh/ckoshka/numerical_types/mod.ts";
 export * from "https://cdn.jsdelivr.net/gh/ckoshka/prettyprint@latest/mod.ts";
-//export { BaseContext } from "https://cdn.jsdelivr.net/gh/ckoshka/langwitch-core/core/mod.ts";
 export * from "https://cdn.jsdelivr.net/gh/ckoshka/revisable@latest/mod.ts";
 export * from "https://cdn.jsdelivr.net/gh/ckoshka/similar_string/mod.ts";
 export * from "https://cdn.jsdelivr.net/gh/ckoshka/unicode_sets/punctuation.ts";
@@ -49,7 +48,7 @@ export * from "../langwitch-core/core/mod.ts";
 export * from "../langwitch-shared-types/mod.ts";
 export * from "../misc-packages-2/ensure/mod.ts";
 export * from "../misc-packages-2/free_utils/mod.ts";
-export * from "../misc-packages-2/state_machine/mod.ts";
+export * from "../misc-packages-2/state_machine_2/mod.ts";
 export * from "../misc-packages-2/utils/mod.ts";
 export * from "../misc-packages-2/await_record/mod.ts";
-export * as Comlink from "https://esm.sh/comlink";
+export * as Comlink from "https://esm.sh/comlink@4.3.1";

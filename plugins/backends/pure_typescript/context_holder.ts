@@ -25,7 +25,7 @@ export const ContextHolder = async (ctxs: BaseContext[]) => {
 				Array.from(knownsIterable).map(hasher.hash),
 			);
 
-			const topN1s = await worker.getNext(knowsAsInts, n * 2).then(xs => xs.filter((x) =>
+			const topN1s = await worker.getNext(knowsAsInts, n * 4).then(xs => xs.filter((x) =>
 				!knowsAsInts.has(x)
 			));
 			//.then((xs) => xs.map(hasher.unhash))

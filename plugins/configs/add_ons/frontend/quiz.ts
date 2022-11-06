@@ -7,6 +7,7 @@ import {
 	EffectsOf,
 	Input,
 	Line,
+	revisable,
 	State,
 	use,
 	UserInputEffect,
@@ -108,13 +109,12 @@ export default <T>(validatorFn: (a0: unknown) => a0 is T) => use<
 					]);
 
 					const userAnswer = await fx.ask("best guess?");
-					return {
+					return revisable(m).revise({
 						data: {
 							userAnswer,
 						},
-						state: m.state,
 						next: "mark",
-					};
+					}).contents;
 				}
 				return m;
 			},

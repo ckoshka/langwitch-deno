@@ -1,4 +1,4 @@
-import { Message, State, use } from "../../../deps.ts";
+import { Message, revisable, State, use } from "../../../deps.ts";
 import { LanguageMetadata, PrinterEffect, ToMark } from "../../../state-transformers/mod.ts";
 import { isLanguageMetadata } from "../../shared/mod.ts";
 import { MarkUserAnswerEffect } from "../frontend/mark.ts";
@@ -28,10 +28,7 @@ export default
 
 				await new Promise(resolve => setTimeout(resolve, 1500));
 
-				return {
-					...m,
-					next: "quiz"
-				}
+				return revisable(m).revise({next: "quiz"}).contents;
 			}
         }
 		return m;

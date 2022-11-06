@@ -1,5 +1,7 @@
+import { ImmutableMap } from "../../misc-packages-2/state_machine_2/deps.ts";
 import { Machine } from "../../misc-packages-2/state_machine_2/mod.ts";
 import {
+BaseContext,
 	checkGraduation,
 	Concept,
 	Free,
@@ -16,7 +18,7 @@ import filterContexts from "./add_ons/backend/filter_contexts.ts";
 import conceptLoader from "./add_ons/backend/load_concepts.ts";
 import noLogging from "./add_ons/backend/no_log.ts";
 import params from "./add_ons/backend/params.ts";
-import sorter from "./add_ons/backend/sort_contexts.ts";
+import sorter from "./add_ons/backend/sort_contexts_2.ts";
 import time from "./add_ons/backend/time.ts";
 import { Exit, Has, Known, Remove, Save, Stats } from "./add_ons/extras/mod.ts";
 import {
@@ -71,6 +73,7 @@ export const initialiseLangwitch = <F, D>(lw: Free<Machine<State>, F, D>) =>
 					data: null,
 					next: "",
 					state: s,
+					map: ImmutableMap()
 				})
 			)
 		);
@@ -104,14 +107,13 @@ export const L1Config = modifiable({
 	...noLogging,
 	...params,
 	...filterConcepts,
-	sortContexts: sorter,
 	...hinter,
 	...io,
 	exit: () => Deno.exit(),
 });
 
 export const createL2Config = async (
-	fxs: Parameters<typeof implCreateHint>[0],
+	fxs: ReturnType<typeof L1Config["get"]>,
 ) => modifiable({
 	...await implCreateHint(fxs),
 	...implMarkUserAnswer,
@@ -124,6 +126,7 @@ export const createL2Config = async (
 	...implRenderCue,
 	...implRenderFeedback,
 	...implRenderInstruction,
+	sortContexts: (state: State) => (ctxs: BaseContext[]) => sorter(state)(ctxs).run(fxs),
 });
 
 type Depromisify<T> = T extends Promise<infer K> ? K : never;

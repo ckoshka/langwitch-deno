@@ -48,7 +48,7 @@ export const style = interpretComponent({
 await startLangwitch({
 	0: {
 		conceptsFile: `langwitch-home/concepts/venetian.json`,
-		sentencesFile: `langwitch-home/data/venetian`,
+		sentencesFiles: [`langwitch-home/data/venetian`],
 		binariesFolder:
 			`/Users/ckoshka/programming/rust-experiments/everything/target/release`,
 	},

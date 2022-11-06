@@ -6,6 +6,7 @@ import {
 	Line,
 	Message,
 	Rem,
+	revisable,
 	State,
 	use,
 	UserInputEffect,
@@ -65,11 +66,7 @@ export default <T>(validatorFn: (a0: unknown) => a0 is T) =>
 						fx.print,
 					);
 					await fx.ask("press enter to continue");
-					return {
-						data: m.data,
-						next: "process",
-						state: m.state,
-					};
+					return revisable(m).revise({next: "process"}).contents;
 				}
 				return m;
 			}

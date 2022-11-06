@@ -7,6 +7,6 @@ export type SaveConceptsEffect = {
 export default 
 	use<SaveConceptsEffect>()
 		.map2((fx) => <T>(m: Message<T, State>) => {
-			fx.saveConcepts(Object.values(m.state.db.concepts));
+			fx.saveConcepts(Object.values(m.state.db.concepts).filter(c => c.timesSeen >= 3));
 			return m;
 		});

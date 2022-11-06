@@ -7,7 +7,7 @@ const isAsync = (fn: Function) => fn.constructor.name === "AsyncFunction";
 
 export const ensure = <T>(
 	args: EnsureArgs<T>,
-): T extends Promise<infer K> ? Promise<K> : T => {
+): T => {
 	if (isAsync(args.try) || isAsync(args.catch)) {
 		return (async () => {
 			try {

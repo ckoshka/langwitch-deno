@@ -4,7 +4,7 @@
 // takes a specific io-state and returns a new one?
 // what steps do we have?
 
-import { ConceptName, Score, State } from "../deps.ts";
+import { State } from "../deps.ts";
 import { Message, zod } from "./deps.ts";
 
 /*
@@ -51,15 +51,7 @@ export const ToProcess = zod.object({
 	userAnswer: zod.string(),
 });
 
-/*
-export const ToAsk = zod.object({
-	next: zod.string(),
-	msg: zod.string(),
-});
-*/
-
 export type ToMark = zod.infer<typeof ToMark>;
-//export type ToAsk = zod.infer<typeof ToAsk>;
 export type ToProcess = zod.infer<typeof ToProcess>;
 export type LangwitchMessage =
 	| Message<ToMark, State>

@@ -13,7 +13,7 @@ export const randomise = (
 			allScored.slice(allScored.length / 3),
 		);
 	}
-	if (allScored[0][0] === newCtxs[0]) {
+	if (allScored[0] && allScored[0][0] === newCtxs[0]) {
 		allScored.push(allScored.shift()!);
 	}
 	return allScored;

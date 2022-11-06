@@ -2,31 +2,40 @@ import {
 	isMatching,
 	Message,
 	produce,
+	revisable,
 	State,
 	useMarkers,
 } from "../../../deps.ts";
-import { ToMark, ToProcess } from "../../../state-transformers/mod.ts";
+import {
+	LangwitchMessage,
+	ToMark,
+	ToProcess,
+} from "../../../state-transformers/mod.ts";
 
-export default (keyBinding = "!k") => useMarkers.map2((fx) =>
-	async (
-		m: Message<ToMark, State>,
-	) => {
-		if (m.data?.userAnswer?.toLowerCase().trim().startsWith(keyBinding)) {
-			const newState = await markKnown(m.state).run(fx);
+export default (keyBinding = "!k") =>
+	useMarkers.map2((fx) =>
+		async (
+			m: LangwitchMessage,
+		) => {
+			if (
+				m.data?.userAnswer?.toLowerCase().trim().startsWith(keyBinding)
+			) {
+				const newState = await markKnown(m.state).run(fx);
 
-			return <Message<ToProcess, State>> {
-				data: {
-					results: [],
-					userAnswer: "",
-				},
-				state: newState,
-				next: "process", // bifurcating output is a problem for chaining
+				return revisable(m)
+					.revise({
+						state: newState,
+						next: "process",
+						data: {
+							results: [],
+							userAnswer: "",
+						},
+					}).contents;
 			}
-		}
 
-		return m;
-	}
-);
+			return m;
+		}
+	);
 
 export const markKnown = (state: State) =>
 	useMarkers.map2((fx) =>

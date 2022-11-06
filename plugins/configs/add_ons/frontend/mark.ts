@@ -1,4 +1,4 @@
-import { Message, romanize, Similar, State, use } from "../../../deps.ts";
+import { Message, revisable, romanize, Similar, State, use } from "../../../deps.ts";
 import {
 	LanguageMetadata,
 	LangwitchMessage,
@@ -37,21 +37,17 @@ export const implMarkUserAnswer: MarkUserAnswerEffect<LanguageMetadata> = {
 
 export default <T>(validatorFn: (a0: unknown) => a0 is T) =>
 	use<MarkUserAnswerEffect<T>>().map2(fx => (
-		m: Message<ToMark, State>,
+		m: LangwitchMessage,
 	): LangwitchMessage => {
 
 		const metadata = m.state.queue[0].metadata;
 
-		if (validatorFn(metadata)) {
+		if (validatorFn(metadata) && m.data?.userAnswer) {
 			const results = fx.markAnswer(metadata)(m.data.userAnswer);
-			return {
-				data: {
-					results,
-					userAnswer: m.data.userAnswer,
-				},
-				state: m.state,
-				next: "feedback",
-			};
+			return revisable(m)
+				.map("data", data => ({...data, results}))
+				.revise({next: "feedback"})
+				.contents;
 		}
 		return m;
 	});
