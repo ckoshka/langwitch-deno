@@ -28,12 +28,13 @@ export type AudioEffect = {
 
 // layer 2
 export const implSpeak = (
-	req: Omit<SpeechReq, "messages">,
-	fx: AudioEffect,
+	fx: AudioEffect & {
+		$tts: Omit<SpeechReq, "messages">
+	},
 ): SpeakEffect => {
 	const cache = Cache<string, Maybe<Uint8Array>>({
 		getter: (s: string) => ttsClient.post({
-			...req,
+			...fx.$tts,
 			messages: s,
 		})
 	});

@@ -22,7 +22,7 @@ import noLogging from "./add_ons/backend/no_log.ts";
 import params from "./add_ons/backend/params.ts";
 import sorter from "./add_ons/backend/sort_contexts_2.ts";
 import time from "./add_ons/backend/time.ts";
-import { Exit, Has, Known, Remove, Save, Stats } from "./add_ons/extras/mod.ts";
+import { Exit, Has, implAudio, implSpeak, Known, Remove, Save, Stats } from "./add_ons/extras/mod.ts";
 import {
 	default as Feedback,
 	implRenderFeedback,
@@ -158,48 +158,28 @@ export const createL2Config = async (
 
 type Depromisify<T> = T extends Promise<infer K> ? K : never;
 
-export type LangwitchConfig = {
+type L2Revisable = Depromisify<ReturnType<typeof createL2Config>>;
+export type LangwitchConfig<A, B> = {
 	0: {
 		conceptsFile: string;
 		sentencesFiles: string[];
 		binariesFolder: string;
 	};
-	1?: (a0: typeof L1Config) => L1Config;
-	2?: Parameters<Depromisify<ReturnType<typeof createL2Config>>["modify"]>[0];
+	1?: (a0: typeof L1Config) => Revisable<typeof L1Config["contents"] & A>;
+	2?: (a0: L2Revisable, fx: typeof L1Config["contents"] & A) => Revisable<L2Revisable["contents"] & B>;
 	3?: (a0: typeof LangwitchMachine) => MachineWrapper<any, any>;
 };
 
-export type GeneralConfig<A, B, C, D> = {
-	a: Revisable<A>;
-	b: Revisable<B>;
-	c: Revisable<C>;
-	d: Revisable<D>;
-}
-
-export type GeneralConfigFns<A, B, C, D, Final> = {
-	0: (args: A) => B | Promise<B>;
-	1: (args: B) => C | Promise<C>;
-	2: (args: C) => D | Promise<D>;
-	3: (args: D) => Final;
-}
-
-export const start = <A, B, C, D, Final>(fns: GeneralConfigFns<A, B, C, D, Final>) => (cfg: GeneralConfig<A, B, C, D>) => async (init: A) => {
-	const b = await fns[0](init);
-	const c = await fns[1](b);
-	const d = await fns[2](c);
-	return fns[3](d);
-}
-
-export const startLangwitch = async (cfg: LangwitchConfig) => {
+export const startLangwitch = async <A, B>(cfg: LangwitchConfig<A, B>) => {
 	const L0 = await createL0Config(cfg[0]);
-	const L1 = cfg[1] ? L1Config.modify(cfg[1]) : L1Config;
+	const L1 = cfg[1] ? cfg[1](L1Config) : L1Config;
 
 	// L2 builds on L1. It mostly describes how to render higher-level components
 	// e.g displaying hints, what instruction to display, etc.
 	// This is where you'd override something like how the hinting works, or what commands are displayed.
 
 	const L2 = await createL2Config(L1.contents).then((c) =>
-		cfg[2] ? c.modify(cfg[2]) : c
+		cfg[2] ? cfg[2](c, L1.contents as any) : c
 	);
 
 	// L3 is the highest level. It describes LW's control-flow:
@@ -216,3 +196,4 @@ export const startLangwitch = async (cfg: LangwitchConfig) => {
 		...L2.contents,
 	}).catch(console.error);
 };
+//TODO: Tap into the backend?

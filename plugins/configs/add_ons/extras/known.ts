@@ -20,7 +20,9 @@ export default (keyBinding = "!k") =>
 		if (
 			m.data?.userAnswer?.toLowerCase().trim().startsWith(keyBinding)
 		) {
-			const newState = await markKnown(m.state).run(fx);
+			const conceptsToMarkKnown = m.data.userAnswer.split(" ").slice(1);
+
+			const newState = await markKnown(m.state)(conceptsToMarkKnown).run(fx);
 
 			return revisable(m)
 				.revise({
@@ -36,10 +38,10 @@ export default (keyBinding = "!k") =>
 		return m;
 	});
 
-export const markKnown = (state: State) =>
+export const markKnown = (state: State) => (toMarkKnown: string[]) =>
 	useMarkers.map2((fx) =>
 		produce(state, (draft) => {
-			const currentConcepts = draft.queue[0].concepts;
+			const currentConcepts = toMarkKnown.length === 0 ? draft.queue[0].concepts : toMarkKnown;
 
 			const isCurrentlyLearning = (c: string) =>
 				draft.db.concepts[c].decayCurve <

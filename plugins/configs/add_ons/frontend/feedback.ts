@@ -7,15 +7,19 @@ import {
 	revisable,
 	State,
 	use,
-	UserInputEffect
+	UserInputEffect,
 } from "../../../deps.ts";
 import { PrinterEffect } from "../../../state-transformers/helpers/effects/print.ts";
 import {
 	LanguageMetadata,
 	LangwitchMessage,
-	ToProcess
+	ToProcess,
 } from "../../../state-transformers/mod.ts";
-import { MapShownAnswerEffect, MapUserAnswerEffect } from "./transforms.ts";
+import {
+	MapHintEffect,
+	MapShownAnswerEffect,
+	MapUserAnswerEffect,
+} from "./transforms.ts";
 
 // params: "translation", show front back + answer? displaying scores
 
@@ -34,7 +38,7 @@ export const showScores = (results: [string, number][]) =>
 	] as Line);
 
 export const implRenderFeedback = (
-	fx: MapShownAnswerEffect & MapUserAnswerEffect,
+	fx: MapShownAnswerEffect & MapUserAnswerEffect & MapHintEffect,
 ): RenderFeedbackEffect<LanguageMetadata> => ({
 	renderFeedback: (metadata) =>
 		async (data) =>
@@ -43,7 +47,7 @@ export const implRenderFeedback = (
 				fx.mapUserAnswer(
 					data.userAnswer.length > 0 ? data.userAnswer : " ",
 				),
-			]).then(([shownAnswer, userAnswer]) => [
+			]).then(async ([shownAnswer, userAnswer]) => [
 				Cls,
 				Br,
 				["primary", "(❀ˆᴗˆ) my translation is:"],
@@ -56,7 +60,16 @@ export const implRenderFeedback = (
 					userAnswer,
 				],
 				Br,
-				...showScores(data.results),
+				...showScores(
+					await Promise.all(
+						data.results.map(async ([concept, score]) =>
+							[await fx.mapShownAnswer(concept), score] as [
+								string,
+								number,
+							]
+						),
+					),
+				),
 				Br,
 			]),
 });
@@ -74,15 +87,13 @@ export default <T>(validatorFn: (a0: unknown) => a0 is T) =>
 				): Promise<LangwitchMessage> => {
 					const metadata = m.state.queue[0].metadata;
 					if (validatorFn(metadata)) {
-
 						// Could calculate the next state in the background while the user is still reading stuff
 						// but that breaks compositionality
 						// being forced to merge two different states together just because they need to be executed asynchronously is bad.
-
+						// unless we did the user input stuff inside the next state fn?
 						await Promise.resolve(
 							fx.renderFeedback(metadata)(m.data),
 						).then(fx.print);
-						await fx.ask("press enter to continue");
 						return revisable(m).revise({ next: "process" })
 							.contents;
 					}

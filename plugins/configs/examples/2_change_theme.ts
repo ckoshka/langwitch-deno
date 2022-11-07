@@ -55,7 +55,7 @@ await startLangwitch({
 		binariesFolder:
 			`/Users/ckoshka/programming/rust-experiments/everything/target/release`,
 	},
-	1: (cfg) => {
-		cfg.print = (c) => console.log(style(c));
-	},
+	1: (cfg) => cfg.revise({
+		print: c => console.log(style(c))
+	})
 });
