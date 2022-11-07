@@ -1,4 +1,4 @@
-import { Rem } from "../tables/data/deps.ts";
+import { Maybe, Rem } from "../tables/data/deps.ts";
 import { baseUrl } from "./consts.ts";
 
 export type ClientConfig<BeforePost, AfterResponse, PostType = BeforePost> = {
@@ -26,7 +26,7 @@ export const Client = <BeforePost, AfterResponse, PostType = BeforePost>(
 							"Content-Type": "application/json",
 						},
 					}),
-				(resp) => resp.then((r) => cfg.after(data, r)),
+				(resp) => resp.then((r) => cfg.after(data, r)).then(d => Maybe.some(d)).catch(() => Maybe.none()) as Promise<Maybe<AfterResponse>>,
 			),
 	};
 };

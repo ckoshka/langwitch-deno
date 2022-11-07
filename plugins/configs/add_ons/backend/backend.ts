@@ -33,7 +33,7 @@ export default (
 	{ sentencesFiles, filterCtxs, knownWords, binariesFolder }: BackendArgs,
 ) => Promise.all(sentencesFiles.map((file) =>
 	initialiseMixedBackend.run({
-		backend: {
+		$backend: {
 			sentencesFile: file,
 			desiredWords: [],
 			maximumWordsToQueue: 25,

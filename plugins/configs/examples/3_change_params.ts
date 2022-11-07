@@ -8,6 +8,6 @@ await startLangwitch({
 			`/Users/ckoshka/programming/rust-experiments/everything/target/release`,
 	},
 	1: (cfg) => {
-		cfg.params.maxLearnable = 3;
+		cfg.$params.maxLearnable = 3;
 	},
 });

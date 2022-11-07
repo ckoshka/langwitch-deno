@@ -20,7 +20,7 @@ export default use<PrinterEffect & MarkUserAnswerEffect<LanguageMetadata>>()
 
 			if (isLanguageMetadata(metadata)) {
 				// Check if the marker would mark the word as correct
-				const inSentence = fx.markAnswer(metadata)(word).find((w) =>
+				const inSentence = (await fx.markAnswer(metadata)(word)).find((w) =>
 					w[0] === word && w[1] === 1.0
 				) !== undefined;
 
@@ -33,7 +33,7 @@ export default use<PrinterEffect & MarkUserAnswerEffect<LanguageMetadata>>()
 					]);
 
 				await new Promise((resolve) =>
-					setTimeout(resolve, 1500)
+					setTimeout(resolve, 700)
 				);
 
 				return revisable(m).revise({ next: "quiz" }).contents;

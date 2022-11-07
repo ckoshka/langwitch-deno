@@ -28,12 +28,12 @@ export const preprocessTsv = () =>
 		& CommandOutputEffect
 	>()
 		.map2(async (fx) => {
-			const { encodings, dict } = makeFilenames(fx.backend.sentencesFile);
+			const { encodings, dict } = makeFilenames(fx.$backend.sentencesFile);
 
 			await fx.fileExists(encodings).then(async (exists) =>
 				!exists
 					? await fx.runCmds([
-						`cat ${fx.backend.sentencesFile}`,
+						`cat ${fx.$backend.sentencesFile}`,
 						`${fx.bins.dicer} --order [1]`,
 						`${fx.bins.encoder} --encodings_filename ${encodings} --dictionary_filename ${dict}`,
 					])
@@ -59,27 +59,27 @@ export const createMixedBackend = (desiredWords: string[]) =>
 		& CommandOutputEffect
 	>().map2(
 		async (fx) => {
-			const { encodings } = makeFilenames(fx.backend.sentencesFile);
+			const { encodings } = makeFilenames(fx.$backend.sentencesFile);
 
 			//console.log(args.desiredWords);
 
 			const [desiredWordsFile, knownWordsFile] = await Promise.all([
 				fx.createTempFile(
-					desiredWords.slice(0, fx.backend.maximumWordsToQueue)
+					desiredWords.slice(0, fx.$backend.maximumWordsToQueue)
 						.concat(
-							fx.backend.knownWords.slice(
-								Math.round(fx.backend.knownWords.length / 10) *
+							fx.$backend.knownWords.slice(
+								Math.round(fx.$backend.knownWords.length / 10) *
 									9,
 							),
 						).join("\n"),
 					// this makes it slower
 				),
-				fx.createTempFile(fx.backend.knownWords.join("\n")),
+				fx.createTempFile(fx.$backend.knownWords.join("\n")),
 			]);
 
 			const lines = await Rem.pipe(
 				fx.getIterFromCmds([
-					`${fx.bins.frequencyChecker} --desired_words_file ${desiredWordsFile} --known_words_file ${knownWordsFile} --sentences_file ${fx.backend.sentencesFile} --ctxs_file ${encodings}`,
+					`${fx.bins.frequencyChecker} --desired_words_file ${desiredWordsFile} --known_words_file ${knownWordsFile} --sentences_file ${fx.$backend.sentencesFile} --ctxs_file ${encodings}`,
 				]),
 				AsyncGen.toArray,
 			);
@@ -134,9 +134,9 @@ export const makeWordlist = use<
 	& WriteTextFileEffect
 	& ReadFileEffect<Promise<string>>
 >().chain(preprocessTsv).map2(async (fx) => {
-	const knownWords = new Set(fx.backend.knownWords);
+	const knownWords = new Set(fx.$backend.knownWords);
 	const { encodings, dict, wordlist } = makeFilenames(
-		fx.backend.sentencesFile,
+		fx.$backend.sentencesFile,
 	);
 	const words: string[] = [];
 	if (await fx.fileExists(wordlist)) {
@@ -151,10 +151,10 @@ export const makeWordlist = use<
 				}"`,
 			]),
 			AsyncGen.map((w) => w.split(" ")),
-			AsyncGen.take(fx.backend.wordlistMaximumIterSteps),
+			AsyncGen.take(fx.$backend.wordlistMaximumIterSteps),
 			AsyncGen.map((word) => {
 				words.push(...word.filter((w: string) => w.length > 0));
-				word.forEach(fx.backend.eachWordCallback);
+				word.forEach(fx.$backend.eachWordCallback);
 			}),
 			AsyncGen.toArray,
 		);

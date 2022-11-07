@@ -8,8 +8,8 @@ const sortConcepts = (concepts: Array<Concept>) =>
 			const learning: string[] = [];
 			const { predict } = Mem({ logBase: f.readLogBase });
 			concepts.forEach((c) =>
-				predict({ when: f.now().hoursFromEpoch, memory: c }) > 0.3 &&
-					c.timesSeen > 2 //! sacrifices purity and also parameterisation
+				predict({ when: f.now().hoursFromEpoch, memory: c }) > f.$params.knownThresholdProbabilityRecall &&
+					c.timesSeen >= f.$params.knownThresholdSeen //! sacrifices purity and also parameterisation
 					? known.push(c.name)
 					: learning.push(c.name)
 			);

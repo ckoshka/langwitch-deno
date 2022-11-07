@@ -1,0 +1,1 @@
+export type Scoped<Scope extends `${string}`, T> = Record<Scope, T>;

@@ -27,7 +27,7 @@ export const findGraduated =
 		use<ParamsReader>().map2((f) =>
 			Array.from(currConcepts).filter((cid) => {
 				const c = db.concepts[cid];
-				return c.decayCurve > f.params.knownThreshold; //?????
+				return c.decayCurve > f.$params.knownThresholdDecayCurve; //?????
 			})
 		);
 
@@ -49,14 +49,14 @@ export const checkGraduation = (s1: State) =>
 
 			if (
 				noneGraduated(graduatedIds) &&
-				atFullLearningCapacity(f.params.maxLearnable)(
+				atFullLearningCapacity(f.$params.maxLearnable)(
 					s1.learning,
 				)
 			) {
 				return Free.lift(s1) as never;
 			}
 
-			const cfg = f.params;
+			const cfg = f.$params;
 
 			const { learning, known } = updateLearnedAndKnown(
 				s1.learning,
@@ -75,7 +75,7 @@ export const checkGraduation = (s1: State) =>
 
 			let queueOfNewItems: BaseContext[] = [];
 			let i = Math.max(
-				f.params.maxLearnable - learning.size,
+				f.$params.maxLearnable - learning.size,
 				graduatedIds.length,
 				0,
 			);
@@ -116,7 +116,7 @@ export const checkGraduation = (s1: State) =>
 						...rec,
 						queue: queueOfNewItems.concat(
 							s1.queue.slice(
-								Math.floor(queueOfNewItems.length / 2),
+								Math.floor(queueOfNewItems.length * f.$params.fractionDiscardOldContexts),
 							),
 						).filter((c) => c !== undefined),
 					};

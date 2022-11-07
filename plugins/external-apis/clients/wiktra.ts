@@ -3,7 +3,7 @@ import { Client } from "./make_client.ts";
 // { "direction": "ru-Latn", "sentence": "я говорю по-португальски" }
 // returns a single transliterated string
 
-interface WiktraReq {
+export interface WiktraReq {
 	source_language_code: string;
 	text: string;
 }

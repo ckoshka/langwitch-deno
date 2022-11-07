@@ -8,7 +8,7 @@ interface AlignmentReq {
 
 export type WordPosition = number & { ___wordPosition: never };
 
-export const preAlignmentFilter = (data: AlignmentReq) => {
+export const preAlignmentFilter = (data: AlignmentReq): { text: string } => {
 	const seg = new Intl.Segmenter(undefined, { granularity: "word" });
 	return {
 		text: data.sentences.filter((sxs) =>

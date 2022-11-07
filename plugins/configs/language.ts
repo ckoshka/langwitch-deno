@@ -42,7 +42,7 @@ import {
 	implRenderHint,
 	implRenderInstruction,
 } from "./add_ons/frontend/quiz.ts";
-import { implStringMappings } from "./add_ons/frontend/transforms.ts";
+import { implStringMappings, implStringMappingsWithLatency } from "./add_ons/frontend/transforms.ts";
 import { isLanguageMetadata, MachineWrapper } from "./shared/mod.ts";
 
 const createState = use<LoadConceptsEffect>()
@@ -50,7 +50,6 @@ const createState = use<LoadConceptsEffect>()
 	.chain((concepts) => refresh({ concepts }))
 	.chain(checkGraduation)
 	.chain(updateTopContext);
-// TODO: Add Save, Stats,
 
 export const LangwitchMachine = MachineWrapper(Free.lift(Machine<State>()))
 	.addF("mark", Mark(isLanguageMetadata))
@@ -144,10 +143,10 @@ export const createL2Config = async (
 	...implRenderHint(fxs),
 	...implMarkUserAnswer(fxs),
 	...implRenderCommands([
-		["k", "mark known"],
-		["x", "exit"],
-		["r", "remove sentence"],
-		["has", "check if the sentence has a word, i.e !has noche"],
+		["!k", "mark known"],
+		["!x", "exit"],
+		["!r", "remove sentence"],
+		["!has", "check if the sentence has a word, i.e !has noche"],
 	]),
 	...implRenderCue,
 	...implRenderFeedback(fxs),

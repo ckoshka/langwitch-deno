@@ -47,13 +47,13 @@ export const adjust = (c: Memory) => (accuracy: number) =>
 			});
 			const normalisedEstimate = estimate > -0.0001
 				? -0.000001
-				: estimate < f.params.initialDecay
-				? f.params.initialDecay
+				: estimate < f.$params.initialDecay
+				? f.$params.initialDecay
 				: estimate;
 			return {
 				decayCurve: remodel(
 					{
-						flexibility: f.params.flexibility,
+						flexibility: f.$params.flexibility,
 						estimatedCurve: normalisedEstimate,
 						oldDecay: c.decayCurve,
 					},

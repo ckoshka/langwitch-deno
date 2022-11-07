@@ -35,6 +35,7 @@ export const style = interpretComponent({
 			horiz: "—",
 		},
 	},
+	// this should be self-explanatory
 	palette: {
 		primary: theme("cyan"),
 		secondary: theme("yellow"),
@@ -43,6 +44,8 @@ export const style = interpretComponent({
 		neutral: theme("purple"),
 		base: theme("red"),
 	},
+	// i'm thinking of phasing out the palette thing, but it does have the benefit of keeping themes consistent
+	// aesthetics are very important to me
 });
 
 await startLangwitch({

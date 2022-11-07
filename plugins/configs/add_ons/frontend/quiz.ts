@@ -1,6 +1,7 @@
 import {
 	Br,
 	Cls,
+	colors,
 	Component,
 	Concept,
 	ConceptName,
@@ -10,6 +11,7 @@ import {
 	Line,
 	revisable,
 	State,
+	Table,
 	use,
 	UserInputEffect,
 } from "../../../deps.ts";
@@ -36,19 +38,22 @@ export type CreateHintMap<Meta> = {
 export type RenderHintEffect<Meta> = {
 	renderHint: (
 		metadata: Meta,
-	) => (numLettersShownForEachWord: number[]) => string;
+	) => (numLettersShownForEachWord: number[]) => string | Promise<string>;
 };
 
 export const implRenderHint = (
 	{ hider, mapHint }: HiderEffect & MapHintEffect,
 ): RenderHintEffect<LanguageMetadata> => {
 	return {
-		renderHint: (meta) => (lettersShown) =>
-			mapHint(meta.words).map((word, i) =>
-				hider.show(lettersShown[i])(meta.words[i])
-			)
-				.map((hint) => `${hint} (${hint.length})`)
-				.join(" "),
+		renderHint: (meta) =>
+			(lettersShown) =>
+				Promise.resolve(mapHint(meta.words)).then((words) =>
+					words.map((word, i) =>
+						hider.show(lettersShown[i])(meta.words[i])
+					)
+						.map((hint) => `${hint} (${hint.length})`)
+						.join(" ")
+				),
 	};
 };
 
@@ -79,24 +84,30 @@ export const implCreateHintMap = async (
 ): Promise<CreateHintMap<LanguageMetadata>> => {
 	const fn = await makeHint().run(fx);
 	return {
-		createHintMap: (state) => (meta) =>
-			fn((word) => state.db.concepts[word])(
-				meta.words,
-			),
+		createHintMap: (state) =>
+			(meta) =>
+				fn((word) => state.db.concepts[word])(
+					meta.words,
+				),
 	};
 };
 
 export const implRenderCommands = (
 	commands: [string, string][],
 ): RenderCommandsEffect => ({
-	renderCommands: () =>
-		commands.map((cmd) =>
-			[
-				[`secondary bold`, `!${cmd[0]}`],
-				[`secondary`, ` => `],
-				[`secondary italic`, `${cmd[1]}`],
-			] as Line
-		),
+	renderCommands: () => [
+		[
+			`secondary`,
+			new Table(
+				...commands.map(
+					(cmd) => [colors.bold(cmd[0]), colors.italic(cmd[1])]
+				),
+			)
+				.header([colors.underline.italic("commands")])
+				//.border(true)
+				.toString(),
+		],
+	],
 });
 
 export default <T>(validatorFn: (a0: unknown) => a0 is T) =>
@@ -109,44 +120,41 @@ export default <T>(validatorFn: (a0: unknown) => a0 is T) =>
 		& RenderInstructionEffect<T>
 		& CreateHintMap<T>
 	>()
-		.chain(makeHint)
-		.map(
-			(hinter, fx) =>
-			async (m: LangwitchMessage): Promise<LangwitchMessage> => {
-				const meta = m.state.queue[0].metadata;
+		.map2(
+			(fx) =>
+				async (m: LangwitchMessage): Promise<LangwitchMessage> => {
+					const meta = m.state.queue[0].metadata;
 
-				if (validatorFn(meta)) {
-					fx.print([
-						Cls,
-						Br,
-						...fx.renderInstruction(),
-						["tertiary", "i believe in you ૮ ˶ᵔ ᵕ ᵔ˶ ა"],
-						Br,
-						...fx.renderCue(meta),
-						Br,
-						[
-							"primary 80",
-							`♡♡ hint: ${
-								fx.renderHint(meta)(
+					if (validatorFn(meta)) {
+						fx.print([
+							Cls,
+							Br,
+							...fx.renderInstruction(),
+							["tertiary", "i believe in you ૮ ˶ᵔ ᵕ ᵔ˶ ა"],
+							Br,
+							...fx.renderCue(meta),
+							Br,
+							[
+								"primary 80",
+								`♡♡ hint: ${await fx.renderHint(meta)(
 									fx.createHintMap(m.state)(meta),
-								)
-							}`,
-						],
-						Br,
-						...fx.renderCommands(),
-						Br,
-					]);
+								)}`,
+							],
+							Br,
+							...fx.renderCommands(),
+							Br,
+						]);
 
-					const userAnswer = await fx.ask("best guess?");
-					return revisable(m).revise({
-						data: {
-							userAnswer,
-						},
-						next: "mark",
-					}).contents;
-				}
-				return m;
-			},
+						const userAnswer = await fx.ask("best guess?");
+						return revisable(m).revise({
+							data: {
+								userAnswer,
+							},
+							next: "mark",
+						}).contents;
+					}
+					return m;
+				},
 		);
 // this could be generalised to
 // (Metadata, CommandsList, Hint, Instruction) -> Component

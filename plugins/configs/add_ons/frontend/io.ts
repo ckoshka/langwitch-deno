@@ -31,5 +31,6 @@ export const style = interpretComponent({
 export default {
 	print: (s: Component) => console.log(style(s)),
 	ask: (s: string | undefined) => Input.prompt(s || "best guess?"),
+	random: Math.random
 	//exit: () => Deno.exit(),
 };

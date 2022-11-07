@@ -25,6 +25,7 @@ export default (state: State) => (ctxs: BaseContext[]) => {
 	const cache: Map<string, number> = new Map();
 	const positions: Map<int, number> = new Map();
 	ctxs.map((c, i) => positions.set(c.id, i));
+
 	return Free.flatten(
 		ctxs.map((ctx) =>
 			Free.flatten(
@@ -49,5 +50,5 @@ export default (state: State) => (ctxs: BaseContext[]) => {
 				)
 		),
 	)
-		.map((newCtxs) => randomise(ctxs, newCtxs));
+		.chain((newCtxs) => randomise.map(fn => fn(ctxs)(newCtxs)));
 };

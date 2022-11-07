@@ -1,4 +1,4 @@
-import { BaseContext, int, Maybe } from "./deps.ts";
+import { BaseContext, int, Maybe, Scoped } from "./deps.ts";
 
 type Filename = string;
 export type MixedBackendArgs = {
@@ -9,9 +9,10 @@ export type MixedBackendArgs = {
 	filterCtxs: (ctxs: [string, string][]) => [string, string][];
 };
 
-export type InitialiseMixedBackendArgs = {
-	backend: {
+export type InitialiseMixedBackendArgs = Scoped<
+	"$backend",
+	{
 		wordlistMaximumIterSteps: number;
 		eachWordCallback: (s: string) => void;
-	} & MixedBackendArgs;
-};
+	} & MixedBackendArgs
+>;

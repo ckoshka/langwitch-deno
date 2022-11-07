@@ -2,29 +2,27 @@ import {
 	Br,
 	Cls,
 	Component,
-	Input,
 	Line,
 	Message,
-	Rem,
 	revisable,
 	State,
 	use,
-	UserInputEffect,
+	UserInputEffect
 } from "../../../deps.ts";
 import { PrinterEffect } from "../../../state-transformers/helpers/effects/print.ts";
 import {
 	LanguageMetadata,
 	LangwitchMessage,
-	ToProcess,
+	ToProcess
 } from "../../../state-transformers/mod.ts";
-import { isLanguageMetadata } from "../../shared/mod.ts";
-import fx from "./io.ts";
 import { MapShownAnswerEffect, MapUserAnswerEffect } from "./transforms.ts";
 
 // params: "translation", show front back + answer? displaying scores
 
 export type RenderFeedbackEffect<T> = {
-	renderFeedback: (metadata: T) => (data: ToProcess) => Component;
+	renderFeedback: (
+		metadata: T,
+	) => (data: ToProcess) => Component | Promise<Component>;
 };
 
 export const showScores = (results: [string, number][]) =>
@@ -38,24 +36,29 @@ export const showScores = (results: [string, number][]) =>
 export const implRenderFeedback = (
 	fx: MapShownAnswerEffect & MapUserAnswerEffect,
 ): RenderFeedbackEffect<LanguageMetadata> => ({
-	renderFeedback: (metadata) => (data) => [
-		Cls,
-		Br,
-		["primary", "(❀ˆᴗˆ) my translation is:"],
-		["secondary italic", `${metadata.front}`],
-		["secondary bold", `${fx.mapShownAnswer(metadata.back)}`],
-		Br,
-		["primary", "(❀ˆᴗˆ) yours was:"],
-		[
-			"secondary bold",
-			fx.mapUserAnswer(
-				data.userAnswer.length > 0 ? data.userAnswer : " ",
-			),
-		],
-		Br,
-		...showScores(data.results),
-		Br,
-	],
+	renderFeedback: (metadata) =>
+		async (data) =>
+			Promise.all([
+				fx.mapShownAnswer(metadata.back),
+				fx.mapUserAnswer(
+					data.userAnswer.length > 0 ? data.userAnswer : " ",
+				),
+			]).then(([shownAnswer, userAnswer]) => [
+				Cls,
+				Br,
+				["primary", "(❀ˆᴗˆ) my translation is:"],
+				["secondary italic", `${metadata.front}`],
+				["secondary bold", `${shownAnswer}`],
+				Br,
+				["primary", "(❀ˆᴗˆ) yours was:"],
+				[
+					"secondary bold",
+					userAnswer,
+				],
+				Br,
+				...showScores(data.results),
+				Br,
+			]),
 });
 
 export default <T>(validatorFn: (a0: unknown) => a0 is T) =>
@@ -66,18 +69,25 @@ export default <T>(validatorFn: (a0: unknown) => a0 is T) =>
 	>()
 		.map2(
 			(fx) =>
-			async (m: Message<ToProcess, State>): Promise<LangwitchMessage> => {
-				const metadata = m.state.queue[0].metadata;
-				if (validatorFn(metadata)) {
-					Rem.pipe(
-						fx.renderFeedback(metadata)(m.data),
-						fx.print,
-					);
-					await fx.ask("press enter to continue");
-					return revisable(m).revise({ next: "process" }).contents;
-				}
-				return m;
-			},
+				async (
+					m: Message<ToProcess, State>,
+				): Promise<LangwitchMessage> => {
+					const metadata = m.state.queue[0].metadata;
+					if (validatorFn(metadata)) {
+
+						// Could calculate the next state in the background while the user is still reading stuff
+						// but that breaks compositionality
+						// being forced to merge two different states together just because they need to be executed asynchronously is bad.
+
+						await Promise.resolve(
+							fx.renderFeedback(metadata)(m.data),
+						).then(fx.print);
+						await fx.ask("press enter to continue");
+						return revisable(m).revise({ next: "process" })
+							.contents;
+					}
+					return m;
+				},
 		);
 // this could be generalised to
 // - take a fn that

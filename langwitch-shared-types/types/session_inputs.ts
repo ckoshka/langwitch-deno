@@ -1,16 +1,27 @@
 export type CoreParams = {
 	flexibility: number; // should be around 0.07
-	knownThreshold: number; // should be -0.4
 	initialDecay: number; // should be -0.5
 
 	maxPerSession: number; // defaults to 150
 	maxLearnable: number; // defaults to 3
 	maxConsiderationSize: number; // defaults to 7
+	knownThresholdSeen: number;
+	knownThresholdProbabilityRecall: number;
+	knownThresholdDecayCurve: number; // should be -0.4
+
+	$contexts: {
+		topFractionContextRandomisation: number;
+		lengthPenaltyLog: number;
+		probabilityRandomShuffle: number;
+	},
+
+	artificialKnownnessFactor: number;
+	fractionDiscardOldContexts: number;
 	// larger: better on word memorisability
 	// smaller: better on path-optimality
 };
 
-export type ParamsReader = { params: CoreParams };
+export type ParamsReader = { $params: CoreParams };
 
 // okay, but what if the user leaves for a while? so we need a 'pause' command to temporarily stop the timer.
 // we also need some data about rates of previous learning? in order to be motivational

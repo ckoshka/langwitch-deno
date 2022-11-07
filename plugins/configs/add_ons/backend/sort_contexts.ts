@@ -1,15 +1,14 @@
-import { BaseContext, int, State } from "../../../deps.ts";
+import { BaseContext, CoreParams, int, ParamsReader, RandomEffect, State, use } from "../../../deps.ts";
 
-export const randomise = (
-	newCtxs: BaseContext[],
-	oldCtxs: [BaseContext, number][],
-) => {
+export const randomise = use<ParamsReader & RandomEffect<0, 1>>().map2(fx => (
+	newCtxs: BaseContext[]
+) => (oldCtxs: [BaseContext, number][]) => {
 	let allScored = oldCtxs.slice();
-	if (Math.random() > 0.5) {
-		allScored = allScored.slice(0, allScored.length / 3).sort((
+	if (fx.random() > fx.$params.$contexts.probabilityRandomShuffle) {
+		allScored = allScored.slice(0, allScored.length /fx.$params.$contexts.topFractionContextRandomisation).sort((
 			_a,
 			_b,
-		) => Math.random() > 0.5 ? 1 : -1).concat(
+		) => fx.random() > 0.5 ? 1 : -1).concat(
 			allScored.slice(allScored.length / 3),
 		);
 	}
@@ -17,7 +16,8 @@ export const randomise = (
 		allScored.push(allScored.shift()!);
 	}
 	return allScored;
-};
+});
+
 export default (state: State) => (ctxs: BaseContext[]) => {
 	const positions: Map<int, number> = new Map();
 	ctxs.map((c, i) => positions.set(c.id, i));
@@ -31,5 +31,5 @@ export default (state: State) => (ctxs: BaseContext[]) => {
 		] as [BaseContext, number]
 	);
 	let allScored = scoredCtxs.sort((a, b) => a[1] - b[1]);
-	return randomise(ctxs, allScored);
+	return randomise.map(fn => fn(ctxs)(allScored));
 };

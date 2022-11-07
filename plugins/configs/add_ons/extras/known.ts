@@ -43,7 +43,7 @@ export const markKnown = (state: State) =>
 
 			const isCurrentlyLearning = (c: string) =>
 				draft.db.concepts[c].decayCurve <
-					fx.params.knownThreshold;
+					fx.$params.knownThresholdDecayCurve;
 
 			currentConcepts.map((c) =>
 				isCurrentlyLearning(c)
