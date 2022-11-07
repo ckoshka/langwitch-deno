@@ -10,11 +10,11 @@ export {
 } from "https://cdn.jsdelivr.net/gh/ckoshka/difflog/mod.ts";
 export * from "https://cdn.jsdelivr.net/gh/ckoshka/free@latest/mod.ts";
 export { openLinesFromFile } from "https://cdn.jsdelivr.net/gh/ckoshka/gen/impure/iters.ts";
-export * from "https://cdn.jsdelivr.net/gh/ckoshka/gen/mod.ts";
-export * as SyncGen from "https://cdn.jsdelivr.net/gh/ckoshka/gen/sync_gens.ts";
+export * from "https://cdn.jsdelivr.net/gh/ckoshka/gen@latest/mod.ts";
+export { default as hashObject } from "https://esm.sh/object-hash@3.0.0";
 export * from "https://cdn.jsdelivr.net/gh/ckoshka/langwitch_hider@latest/mod.ts";
 export { Maybe } from "https://cdn.jsdelivr.net/gh/ckoshka/monadder/mod.ts";
-export * from "https://cdn.jsdelivr.net/gh/ckoshka/numerical_types/mod.ts";
+export * from "https://cdn.jsdelivr.net/gh/ckoshka/numerical_types@latest/mod.ts";
 export * from "https://cdn.jsdelivr.net/gh/ckoshka/prettyprint@latest/mod.ts";
 export * from "https://cdn.jsdelivr.net/gh/ckoshka/revisable@latest/mod.ts";
 export * from "https://cdn.jsdelivr.net/gh/ckoshka/similar_string/mod.ts";
@@ -44,6 +44,7 @@ export { produce } from "https://esm.sh/immer@9.0.15";
 export * from "https://esm.sh/monocle-ts@2.3.13";
 export * as Ram from "https://esm.sh/ramda@0.28.0";
 export * as Rem from "https://esm.sh/remeda@1.1.0";
+export { default as RenderKid } from "https://esm.sh/renderkid@3.0.0";
 export * from "https://esm.sh/ts-pattern@4.0.5";
 export { default as wu, type WuIterable } from "https://esm.sh/wu@2.1.0";
 export * as zod from "https://esm.sh/zod@3.19.1";
@@ -54,4 +55,6 @@ export * from "../misc-packages-2/ensure/mod.ts";
 export * from "../misc-packages-2/free_utils/mod.ts";
 export * from "../misc-packages-2/state_machine_2/mod.ts";
 export * from "../misc-packages-2/utils/mod.ts";
+export * from "../misc-packages-2/seg/mod.ts";
+
 

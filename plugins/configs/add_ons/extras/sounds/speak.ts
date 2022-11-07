@@ -1,10 +1,11 @@
-import { Message, State, use } from "../../../../deps.ts";
+import { Maybe, Message, State, use } from "../../../../deps.ts";
 import { SpeechReq, ttsClient } from "../../../../external-apis/clients/tts.ts";
 import {
 	GetMetadataEffect,
 	LanguageMetadata,
 	ToProcess,
 } from "../../../../state-transformers/mod.ts";
+import { Cache } from "../../../shared/cache.ts";
 
 export type SpeakEffect = {
 	runSpeak: (sentence: string, speak: boolean) => void;
@@ -25,30 +26,31 @@ export type AudioEffect = {
 	playAudio: (audio: Uint8Array) => void;
 };
 
+// layer 2
 export const implSpeak = (
 	req: Omit<SpeechReq, "messages">,
 	fx: AudioEffect,
 ): SpeakEffect => {
-	const cache = new Map<string, Uint8Array>();
+	const cache = Cache<string, Maybe<Uint8Array>>({
+		getter: (s: string) => ttsClient.post({
+			...req,
+			messages: s,
+		})
+	});
 	return {
 		runSpeak: async (s, speak) => {
-			const previous = cache.get(s);
-			if (previous) {
-				speak ? fx.playAudio(previous) : {};
-			} else {
-				const result = await ttsClient.post({
-					...req,
-					messages: s,
-				}).catch(() => new Uint8Array());
-				if (speak) {
-					fx.playAudio(result);
+			const result = await cache.get(s);
+			result.map(audio => {
+				if (speak && audio.length !== 0) {
+					fx.playAudio(audio);
 				}
-				cache.set(s, result);
-			}
+			});
 		},
 	};
 };
 
+// layer 1
+// meaning mpvPath must be in layer 0
 export const implAudio = ({ mpvPath }: { mpvPath: string }) => ({
 	playAudio: async (audio: Uint8Array) => {
 		const proc = Deno.run({

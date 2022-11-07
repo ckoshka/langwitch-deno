@@ -31,13 +31,11 @@ export const makeHint = () =>
 							memory: concept,
 							when: f.now().hoursFromEpoch,
 						});
-						const lettersShown = w.length -
-							Math.pow(proportion, f.readLogBase - 1) *
-								w.length;
+						const lettersShown = 1 - Math.pow(proportion, f.readLogBase - 1);
 
 						return concept.timesSeen < 4
 							? Math.max(
-								w.length / (concept.timesSeen + 1),
+								1 / (concept.timesSeen + 1),
 								lettersShown,
 							)
 							: lettersShown;

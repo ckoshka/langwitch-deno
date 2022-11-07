@@ -1,0 +1,105 @@
+{
+  "version": "2",
+  "remote": {},
+  "npm": {
+    "specifiers": { "lmdb": "lmdb@2.6.8" },
+    "packages": {
+      "@lmdb/lmdb-darwin-arm64@2.6.8": {
+        "integrity": "sha512-u3BSAWCiyN8DZnXx4HdQjFTD2mlAnRHCmtgjQY7RwH99bFgZQzGpqvtM4TNh5bLuInxovyilI3qNmqUBEqbgtg==",
+        "dependencies": {}
+      },
+      "@lmdb/lmdb-darwin-x64@2.6.8": {
+        "integrity": "sha512-btsrk8V8rjYxMgQX0hduqmhf0BFHTcjF4ZO7b796rMonGwhIZYdKE8CY1l/AQfRhoB6Pi1PKwhyO6B8W9zxNCQ==",
+        "dependencies": {}
+      },
+      "@lmdb/lmdb-linux-arm64@2.6.8": {
+        "integrity": "sha512-TVjR7QSSbuJqhCib/nqpRPvCA5rShm5ep6VJ/O0Wz04z1zIuRjkEYFwx9bOlRqmyu33gvab3MWqDyA33BN94sw==",
+        "dependencies": {}
+      },
+      "@lmdb/lmdb-linux-arm@2.6.8": {
+        "integrity": "sha512-J4LlzHWkdWLNFlJJ2ZZlQF6k2Dejjd0e5kBMclvK4BdEJ5OOqrOZIAbDUb/efOhbmlR4AGShzIPviCRqOufU1w==",
+        "dependencies": {}
+      },
+      "@lmdb/lmdb-linux-x64@2.6.8": {
+        "integrity": "sha512-VqeBBNiQ5bkvIHW3gATypT6OMBCdHJtZqSvYXmQL5p2hJ/VqV1H3W2HBrAhKTs0ap4aUBPmuHTvoC87lgSCpmg==",
+        "dependencies": {}
+      },
+      "@lmdb/lmdb-win32-x64@2.6.8": {
+        "integrity": "sha512-duVM8zq1FZWzu9tzwhOMAkbCiz7EZkXqPGv3EtG+FLPgBNiEih1AXB7WsrYufJZgFUzKOJQQyNVVA2/UJDOtjQ==",
+        "dependencies": {}
+      },
+      "@msgpackr-extract/msgpackr-extract-darwin-arm64@2.1.2": {
+        "integrity": "sha512-TyVLn3S/+ikMDsh0gbKv2YydKClN8HaJDDpONlaZR+LVJmsxLFUgA+O7zu59h9+f9gX1aj/ahw9wqa6rosmrYQ==",
+        "dependencies": {}
+      },
+      "@msgpackr-extract/msgpackr-extract-darwin-x64@2.1.2": {
+        "integrity": "sha512-YPXtcVkhmVNoMGlqp81ZHW4dMxK09msWgnxtsDpSiZwTzUBG2N+No2bsr7WMtBKCVJMSD6mbAl7YhKUqkp/Few==",
+        "dependencies": {}
+      },
+      "@msgpackr-extract/msgpackr-extract-linux-arm64@2.1.2": {
+        "integrity": "sha512-vHZ2JiOWF2+DN9lzltGbhtQNzDo8fKFGrf37UJrgqxU0yvtERrzUugnfnX1wmVfFhSsF8OxrfqiNOUc5hko1Zg==",
+        "dependencies": {}
+      },
+      "@msgpackr-extract/msgpackr-extract-linux-arm@2.1.2": {
+        "integrity": "sha512-42R4MAFeIeNn+L98qwxAt360bwzX2Kf0ZQkBBucJ2Ircza3asoY4CDbgiu9VWklq8gWJVSJSJBwDI+c/THiWkA==",
+        "dependencies": {}
+      },
+      "@msgpackr-extract/msgpackr-extract-linux-x64@2.1.2": {
+        "integrity": "sha512-RjRoRxg7Q3kPAdUSC5EUUPlwfMkIVhmaRTIe+cqHbKrGZ4M6TyCA/b5qMaukQ/1CHWrqYY2FbKOAU8Hg0pQFzg==",
+        "dependencies": {}
+      },
+      "@msgpackr-extract/msgpackr-extract-win32-x64@2.1.2": {
+        "integrity": "sha512-rIZVR48zA8hGkHIK7ED6+ZiXsjRCcAVBJbm8o89OKAMTmEAQ2QvoOxoiu3w2isAaWwzgtQIOFIqHwvZDyLKCvw==",
+        "dependencies": {}
+      },
+      "lmdb@2.6.8": {
+        "integrity": "sha512-Vn+o5gFYTE39twmt9gVSDJi8mrWbnkDongSuYdGxhHDHFGX4ct2ITQWMp5THeoEcsQsNK4KhALjW1Hx83x7WGw==",
+        "dependencies": {
+          "@lmdb/lmdb-darwin-arm64": "@lmdb/lmdb-darwin-arm64@2.6.8",
+          "@lmdb/lmdb-darwin-x64": "@lmdb/lmdb-darwin-x64@2.6.8",
+          "@lmdb/lmdb-linux-arm": "@lmdb/lmdb-linux-arm@2.6.8",
+          "@lmdb/lmdb-linux-arm64": "@lmdb/lmdb-linux-arm64@2.6.8",
+          "@lmdb/lmdb-linux-x64": "@lmdb/lmdb-linux-x64@2.6.8",
+          "@lmdb/lmdb-win32-x64": "@lmdb/lmdb-win32-x64@2.6.8",
+          "msgpackr": "msgpackr@1.7.2",
+          "node-addon-api": "node-addon-api@4.3.0",
+          "node-gyp-build-optional-packages": "node-gyp-build-optional-packages@5.0.3",
+          "ordered-binary": "ordered-binary@1.4.0",
+          "weak-lru-cache": "weak-lru-cache@1.2.2"
+        }
+      },
+      "msgpackr-extract@2.1.2": {
+        "integrity": "sha512-cmrmERQFb19NX2JABOGtrKdHMyI6RUyceaPBQ2iRz9GnDkjBWFjNJC0jyyoOfZl2U/LZE3tQCCQc4dlRyA8mcA==",
+        "dependencies": {
+          "@msgpackr-extract/msgpackr-extract-darwin-arm64": "@msgpackr-extract/msgpackr-extract-darwin-arm64@2.1.2",
+          "@msgpackr-extract/msgpackr-extract-darwin-x64": "@msgpackr-extract/msgpackr-extract-darwin-x64@2.1.2",
+          "@msgpackr-extract/msgpackr-extract-linux-arm": "@msgpackr-extract/msgpackr-extract-linux-arm@2.1.2",
+          "@msgpackr-extract/msgpackr-extract-linux-arm64": "@msgpackr-extract/msgpackr-extract-linux-arm64@2.1.2",
+          "@msgpackr-extract/msgpackr-extract-linux-x64": "@msgpackr-extract/msgpackr-extract-linux-x64@2.1.2",
+          "@msgpackr-extract/msgpackr-extract-win32-x64": "@msgpackr-extract/msgpackr-extract-win32-x64@2.1.2",
+          "node-gyp-build-optional-packages": "node-gyp-build-optional-packages@5.0.3"
+        }
+      },
+      "msgpackr@1.7.2": {
+        "integrity": "sha512-mWScyHTtG6TjivXX9vfIy2nBtRupaiAj0HQ2mtmpmYujAmqZmaaEVPaSZ1NKLMvicaMLFzEaMk0ManxMRg8rMQ==",
+        "dependencies": { "msgpackr-extract": "msgpackr-extract@2.1.2" }
+      },
+      "node-addon-api@4.3.0": {
+        "integrity": "sha512-73sE9+3UaLYYFmDsFZnqCInzPyh3MqIwZO9cw58yIqAZhONrrabrYyYe3TuIqtIiOuTXVhsGau8hcrhhwSsDIQ==",
+        "dependencies": {}
+      },
+      "node-gyp-build-optional-packages@5.0.3": {
+        "integrity": "sha512-k75jcVzk5wnnc/FMxsf4udAoTEUv2jY3ycfdSd3yWu6Cnd1oee6/CfZJApyscA4FJOmdoixWwiwOyf16RzD5JA==",
+        "dependencies": {}
+      },
+      "ordered-binary@1.4.0": {
+        "integrity": "sha512-EHQ/jk4/a9hLupIKxTfUsQRej1Yd/0QLQs3vGvIqg5ZtCYSzNhkzHoZc7Zf4e4kUlDaC3Uw8Q/1opOLNN2OKRQ==",
+        "dependencies": {}
+      },
+      "weak-lru-cache@1.2.2": {
+        "integrity": "sha512-DEAoo25RfSYMuTGc9vPJzZcZullwIqRDSI9LOy+fkCJPi6hykCnfKaXTuPBDuXAUcqHXyOgFtHNp/kB2FjYHbw==",
+        "dependencies": {}
+      }
+    }
+  }
+}

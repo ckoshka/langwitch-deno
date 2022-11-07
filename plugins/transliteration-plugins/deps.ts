@@ -35,3 +35,6 @@ export { default as ICUTable } from "../external-apis/tables/data/icu_table.ts";
 // or, alternatively, transliterate the entire deck beforehand (not feasible in many cases, inefficient on data & compute)
 
 // is calling into the lua runtime for wiktra multithreaded or blocking?
+
+// strategy: thunk-cache ahead
+// what layer? it would have to be layer 0 since transliteration occurs in layer 1

@@ -5,12 +5,13 @@ import {
 	checkGraduation,
 	Concept,
 	Free,
-	modifiable,
+	revisable,
 	refresh,
 	Rem,
 	State,
 	updateTopContext,
 	use,
+Revisable,
 } from "../deps.ts";
 import { LoadConceptsEffect } from "../state-transformers/mod.ts";
 import backend from "./add_ons/backend/backend.ts";
@@ -106,7 +107,7 @@ export const createL0Config = async (
 		sentencesFiles: string[];
 		binariesFolder: string;
 	},
-) => modifiable({
+) => revisable({
 	...conceptLoader(conceptsFile),
 	...await backend({
 		sentencesFiles,
@@ -124,7 +125,7 @@ export const createL0Config = async (
 	},
 });
 
-export const L1Config = modifiable({
+export const L1Config = revisable({
 	...time,
 	...noLogging,
 	...params,
@@ -137,8 +138,8 @@ export const L1Config = modifiable({
 });
 
 export const createL2Config = async (
-	fxs: ReturnType<typeof L1Config["get"]>,
-) => modifiable({
+	fxs: typeof L1Config["contents"],
+) => revisable({
 	...await implCreateHintMap(fxs),
 	...implRenderHint(fxs),
 	...implMarkUserAnswer(fxs),
@@ -163,10 +164,31 @@ export type LangwitchConfig = {
 		sentencesFiles: string[];
 		binariesFolder: string;
 	};
-	1?: Parameters<typeof L1Config.modify>[0];
+	1?: (a0: typeof L1Config) => L1Config;
 	2?: Parameters<Depromisify<ReturnType<typeof createL2Config>>["modify"]>[0];
 	3?: (a0: typeof LangwitchMachine) => MachineWrapper<any, any>;
 };
+
+export type GeneralConfig<A, B, C, D> = {
+	a: Revisable<A>;
+	b: Revisable<B>;
+	c: Revisable<C>;
+	d: Revisable<D>;
+}
+
+export type GeneralConfigFns<A, B, C, D, Final> = {
+	0: (args: A) => B | Promise<B>;
+	1: (args: B) => C | Promise<C>;
+	2: (args: C) => D | Promise<D>;
+	3: (args: D) => Final;
+}
+
+export const start = <A, B, C, D, Final>(fns: GeneralConfigFns<A, B, C, D, Final>) => (cfg: GeneralConfig<A, B, C, D>) => async (init: A) => {
+	const b = await fns[0](init);
+	const c = await fns[1](b);
+	const d = await fns[2](c);
+	return fns[3](d);
+}
 
 export const startLangwitch = async (cfg: LangwitchConfig) => {
 	const L0 = await createL0Config(cfg[0]);
@@ -176,7 +198,7 @@ export const startLangwitch = async (cfg: LangwitchConfig) => {
 	// e.g displaying hints, what instruction to display, etc.
 	// This is where you'd override something like how the hinting works, or what commands are displayed.
 
-	const L2 = await createL2Config(L1.get()).then((c) =>
+	const L2 = await createL2Config(L1.contents).then((c) =>
 		cfg[2] ? c.modify(cfg[2]) : c
 	);
 
@@ -189,8 +211,8 @@ export const startLangwitch = async (cfg: LangwitchConfig) => {
 	const L3 = cfg[3] ? cfg[3](LangwitchMachine).get() : LangwitchMachine.get();
 
 	await initialiseLangwitch(L3).run({
-		...L0.get(),
-		...L1.get(),
-		...L2.get(),
+		...L0.contents,
+		...L1.contents,
+		...L2.contents,
 	}).catch(console.error);
 };

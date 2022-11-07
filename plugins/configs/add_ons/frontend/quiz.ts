@@ -49,7 +49,7 @@ export const implRenderHint = (
 			(lettersShown) =>
 				Promise.resolve(mapHint(meta.words)).then((words) =>
 					words.map((word, i) =>
-						hider.show(lettersShown[i])(meta.words[i])
+						hider.show(Math.round(lettersShown[i] * word.length))(word)
 					)
 						.map((hint) => `${hint} (${hint.length})`)
 						.join(" ")
@@ -146,12 +146,21 @@ export default <T>(validatorFn: (a0: unknown) => a0 is T) =>
 						]);
 
 						const userAnswer = await fx.ask("best guess?");
-						return revisable(m).revise({
-							data: {
-								userAnswer,
-							},
-							next: "mark",
-						}).contents;
+						return userAnswer === "" 
+							? revisable(m).revise({
+								data: {
+									userAnswer: "",
+									results: m.state.queue[0].concepts.map(c => [c, 1])
+								},
+								next: "feedback"
+							}).contents
+
+							: revisable(m).revise({
+								data: {
+									userAnswer,
+								},
+								next: "mark",
+							}).contents;
 					}
 					return m;
 				},

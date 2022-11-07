@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script defer src="https://cdn.jsdelivr.net/gh/nextapps-de/flexsearch@0.7.31/dist/flexsearch.bundle.js"></script>
+    <title>Langwitch dataset visualiser</title>
+</head>
+
+<body>
+    <style>
+
+        :root {
+            --black: black;
+            --main-font: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            --cinnamon: #efbfa9;
+        }
+
+        .rounded {
+            border-radius: 15px;
+        }
+
+        .solid-border {
+            border: 1px solid var(--black);
+        }
+
+        .cinnamon {
+            background-color: var(--cinnamon);
+        }
+
+        body {
+            font-family: var(--main-font);
+        }
+
+        .panel {
+            display: grid;
+            grid-auto-flow: row;
+            align-items: center;
+            justify-items: center;
+        }
+
+        .dataset {
+            margin: 15px;
+            padding: 15px;
+            max-width: 400px;
+        }
+
+        .property-label {
+            font-weight: 800;
+            margin-right: 1em;
+        }
+
+    </style>
+    <div class="panel rounded solid-border">
+        <div class="dataset rounded solid-border cinnamon">
+            <span class="property-label">Size:</span>
+            <span>15Mb</span>
+        </div>
+    </div>
+    <script type="module">
+        import { h, text, app } from "https://unpkg.com/hyperapp"
+
+        const AddTodo = (state) => ({
+            ...state,
+            value: "",
+            todos: state.todos.concat(state.value),
+        })
+
+        const NewValue = (state, event) => ({
+            ...state,
+            value: event.target.value,
+        })
+
+        app({
+            init: { todos: [], value: "" },
+            view: ({ todos, value }) =>
+                h("main", {}, [
+                    h("h1", {}, text("To do list")),
+                    h("input", { type: "text", oninput: NewValue, value }),
+                    h("ul", {},
+                        todos.map((todo) => h("li", {}, text(todo)))
+                    ),
+                    h("button", { onclick: AddTodo }, text("New!")),
+                ]),
+            node: document.getElementById("app"),
+        })
+    </script>
+
+    <main id="app"></main>
+</body>
+
+</html>
