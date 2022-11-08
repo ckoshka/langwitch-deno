@@ -13,6 +13,7 @@ import {
 	use,
 Revisable,
 } from "../deps.ts";
+import { implFileSystem } from "../io_effects/mod.ts";
 import { LoadConceptsEffect } from "../state-transformers/mod.ts";
 import backend from "./add_ons/backend/backend.ts";
 import filterConcepts from "./add_ons/backend/filter_concepts.ts";
@@ -134,6 +135,7 @@ export const L1Config = revisable({
 	...io,
 	...implStringMappings,
 	...implMeasurePartialSimilarity,
+	...implFileSystem,
 	exit: () => Deno.exit(),
 });
 
@@ -157,29 +159,32 @@ export const createL2Config = async (
 });
 
 type Depromisify<T> = T extends Promise<infer K> ? K : never;
-
+type L0Revisable = Depromisify<ReturnType<typeof createL0Config>>;
+type L1Revisable = typeof L1Config;
 type L2Revisable = Depromisify<ReturnType<typeof createL2Config>>;
-export type LangwitchConfig<A, B> = {
-	0: {
+
+export type LangwitchConfig<A, B, C> = {
+	init: {
 		conceptsFile: string;
 		sentencesFiles: string[];
 		binariesFolder: string;
 	};
-	1?: (a0: typeof L1Config) => Revisable<typeof L1Config["contents"] & A>;
-	2?: (a0: L2Revisable, fx: typeof L1Config["contents"] & A) => Revisable<L2Revisable["contents"] & B>;
+	0?: (a0: L0Revisable) => Revisable<L0Revisable["contents"] & A>
+	1?: (a0: Revisable<L1Revisable["contents"]>, fx: L0Revisable["contents"] & A) => Revisable<L1Revisable["contents"] & B>;
+	2?: (a0: L2Revisable, fx: L1Revisable["contents"] & B & L0Revisable["contents"] & A) => Revisable<L2Revisable["contents"] & C>;
 	3?: (a0: typeof LangwitchMachine) => MachineWrapper<any, any>;
 };
 
-export const startLangwitch = async <A, B>(cfg: LangwitchConfig<A, B>) => {
-	const L0 = await createL0Config(cfg[0]);
-	const L1 = cfg[1] ? cfg[1](L1Config) : L1Config;
+export const startLangwitch = async <A, B, C>(cfg: LangwitchConfig<A, B, C>) => {
+	const L0 = await createL0Config(cfg.init).then(l0 => cfg[0] ? cfg[0](l0) : l0);
+	const L1 = cfg[1] ? cfg[1](L1Config, L0.contents as any) : L1Config;
 
 	// L2 builds on L1. It mostly describes how to render higher-level components
 	// e.g displaying hints, what instruction to display, etc.
 	// This is where you'd override something like how the hinting works, or what commands are displayed.
 
 	const L2 = await createL2Config(L1.contents).then((c) =>
-		cfg[2] ? cfg[2](c, L1.contents as any) : c
+		cfg[2] ? cfg[2](c, {...L1.contents, ...L0.contents} as any) : c
 	);
 
 	// L3 is the highest level. It describes LW's control-flow:

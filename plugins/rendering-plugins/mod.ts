@@ -23,14 +23,15 @@ export type HtmlProps = {
 export const Html = (style: Record<string, HtmlProps> = {}) => {
     const r = new RenderKid();
 
-    return {
+    const self = {
         where: (s2: Record<string, HtmlProps>) => Html({...style, ...s2}),
         render: (html: string) => {
             r.style(style);
             return r.render(html);
-
-        }
+        },
+        log: (html: string) => console.log(self.render(html))
     }
+    return self;
 }
 
 /*console.log(Html({

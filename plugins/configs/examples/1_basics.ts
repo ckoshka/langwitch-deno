@@ -24,7 +24,7 @@ import makeLogger from "../add_ons/backend/we_do_a_little_logging.ts";
 // So if you change 'tagalog' by removing or adding sentences, you need to make sure she registers the change by deleting these other generated files.
 
 await startLangwitch({
-	0: {
+	init: {
 		// We want to read in our concepts from here:
 		conceptsFile: `langwitch-home/concepts/venetian.json`,
 		// And our sentences from these files

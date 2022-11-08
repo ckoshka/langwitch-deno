@@ -49,7 +49,7 @@ export const style = interpretComponent({
 });
 
 await startLangwitch({
-	0: {
+	init: {
 		conceptsFile: `langwitch-home/concepts/venetian.json`,
 		sentencesFiles: [`langwitch-home/data/venetian`],
 		binariesFolder:

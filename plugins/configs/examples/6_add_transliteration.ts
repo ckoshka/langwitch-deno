@@ -4,7 +4,7 @@ import { Rem } from "../../deps.ts";
 import { startLangwitch } from "../language.ts";
 
 await startLangwitch({
-	0: {
+	init: {
 		conceptsFile: `langwitch-home/concepts/georgian.json`,
 		sentencesFiles: [`georgian.tsv`],
 		binariesFolder:
