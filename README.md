@@ -1,13 +1,13 @@
 <img src="https://github.com/ckoshka/langwitch-deno/raw/master/static/potted_plant.png" width="200" />
 
-### What
+### The what
 
 - Langwitch is an experimental language learning tool for power users.
 - It can teach you any language from scratch with just a collection of sentences and their translations.
 - Or, alternatively, any writing system from scratch with just a collection of words and their IPA transcriptions.
 - It comes with 25 billion high-quality sentences mined across 1700 languages using a combination of traditional heuristic filtering and automatically curated neural machine translation.
 
-### How
+### The how
 
 #### From a type-level perspective
 
@@ -16,10 +16,10 @@
 
 #### From an algorithmic perspective
 
-- There are three core algorithms that Langwitch uses. All of them are simple, easy to reason about, and completely parameterised. They come to about 7kb of code in total.
+- There are three core algorithms that Langwitch uses. All of them are simple, easy to reason about, and completely parameterised.
 - Langwitch is quite fast. I have a very low tolerance threshold for slow interfaces. My personal Portuguese collection has 13 million sentences and it boots within five seconds; once the session has loaded, each topological reordering requires between 0.5ms and 5ms. 
 
-### Why
+### The why
 
 It really bothers me how slow, boring, and useless normal language-learning is. 
 
@@ -31,7 +31,7 @@ About a year ago, I wondered whether the process could be optimised. I was hopin
 
 From testing with early adopters over the last year, it seems like the difference isn't 15 to 20% faster, but 10 to 50 times faster – often compressing weeks into a few hours. It's not that Langwitch does anything special or unique, it's simply that most other methods are just very bad, reflecting the intuitions of 19th century pedagogy rather than modern cognitive linguistics.
 
-### Who
+### The who
 
 Here are some cases where you might want to use or extend Langwitch.
 
@@ -57,6 +57,8 @@ Here are some cases where Langwitch might not be right for you.
 
 - [Nix](https://nixos.org/download.html)
 
+If Nix fails for some reason (I think I've seen this happen twice)
+
 That's it.
 
 Langwitch doesn't pollute your environment.
@@ -67,7 +69,9 @@ Langwitch itself is a self-contained script run in an isolated Nix shell. You ju
 
 Lastly, you need some sentences for it to draw from. By default, it will download at most 5 million sentences covering equal proportions of everything available. 
 
-It has general datasets covering the internet, UN transcripts, movie dialogue, novels, Wikipedia, scientific journals, and news articles. It also has topics covering specialised technical vocabulary. See if any pique your interest.
+It has general datasets covering the internet, UN transcripts, movie dialogue, novels, Wikipedia, scientific journals, and news articles. It also has topics covering specialised technical vocabulary. 
+
+See if any pique your interest. You can browse the high-resource directory [here](https://archive.org/download/english-portuguese-statmt) and the low-resource directory [here](https://archive.org/download/bible_alignments_v2) while the installer is running. I've been doing this by myself so far. I would love it if you had anything to contribute.
 
 ```
 english-armenian-topics_agriculture-ord3-gtrans-2022
