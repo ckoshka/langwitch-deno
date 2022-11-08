@@ -1,3 +1,1 @@
-![](/static/potted_plant.png | width=100)
-
-testing
+<img src="https://github.com/ckoshka/langwitch-deno/raw/master/static/potted_plant.png" width="200" />
