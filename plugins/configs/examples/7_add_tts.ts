@@ -5,7 +5,7 @@ import { startLangwitch } from "../language.ts";
 // https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/language-support?tabs=stt-tts
 
 await startLangwitch({
-	0: {
+	init: {
 		conceptsFile: `langwitch-home/concepts/arabic.json`,
 		sentencesFiles: [`arabic.tsv`],
 		binariesFolder:

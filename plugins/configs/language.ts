@@ -146,10 +146,10 @@ export const createL2Config = async (
 	...implRenderHint(fxs),
 	...implMarkUserAnswer(fxs),
 	...implRenderCommands([
-		["!k", "mark known"],
+		["!k", "mark known - !k word1 word2"],
 		["!x", "exit"],
 		["!r", "remove sentence"],
-		["!has", "check if the sentence has a word, i.e !has noche"],
+		["!has", "check if the sentence has a word - !has noche"],
 	]),
 	...implRenderCue,
 	...implRenderFeedback(fxs),

@@ -1,7 +1,5 @@
-import { isMatching, Message, revisable, State } from "../../../deps.ts";
+import { Message, revisable, State } from "../../../deps.ts";
 import {
-	queueLens,
-	stateLens,
 	ToMark,
 } from "../../../state-transformers/mod.ts";
 
