@@ -162,6 +162,11 @@ english-armenian-topics_urban-ord3-gtrans-2022
 
 Please be careful to weed out any topics you're not interested in. Someone I know was stuck learning about pottery because the pottery dataset is around six times larger than the others (250,000 sentences).
 
+---
+
+THIS MIGHT NOT WORK, I'M STILL TESTING IT
+
 ```
-nix-shell -E "import (builtins.fetchurl $url)" --run ""
+nix-shell -E "import (builtins.fetchurl https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/scripts/nix/shell.nix)" --run "deno run -A https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/scripts/install.ts"
 ```
+
