@@ -9,7 +9,7 @@ export const ContextHolder = async (ctxs: BaseContext[]) => {
 	});
 	const worker = Comlink.wrap<CtxWorker>(w1);
 
-	await worker.add(
+	worker.add(
 		ctxs.map((c) => ({
 			id: c.id,
 			unknowns: new Set(c.concepts.map(hasher.hash)),
