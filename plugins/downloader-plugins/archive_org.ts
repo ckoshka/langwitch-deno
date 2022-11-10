@@ -86,10 +86,10 @@ export const downloadLanguage = (languageName: string) =>
 			} catch {
 				//
 			}
-			
+
 			const finalName = join(fx.homeFolder, languageName);
 			await fx.runCmds([
-				`paste -d "\\n" ${names.join(" ")}`,
+				`paste -d "\\n" -z ${names.join(" ")}`,
 				`head -n 3000000`,
 				//`${fx.nosameBinaryPath}`,
 				//`${fx.sorterBinaryPath} --min 0.97 --variety_filter false`,
