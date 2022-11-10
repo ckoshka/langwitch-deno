@@ -81,7 +81,13 @@ export const downloadLanguage = (languageName: string) =>
 			))
 		)
 		.map(async (names, fx) => {
-			const finalName = join(fx.homeFolder, "data", languageName);
+			try {
+				await Deno.mkdir(fx.homeFolder);
+			} catch {
+				//
+			}
+			
+			const finalName = join(fx.homeFolder, languageName);
 			await fx.runCmds([
 				`paste -d "\\n" ${names.join(" ")}`,
 				`head -n 3000000`,
