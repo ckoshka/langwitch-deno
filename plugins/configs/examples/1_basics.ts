@@ -2,7 +2,7 @@
 // Each example in this folder gets gradually more complex
 
 import { addCommands, startLangwitch } from "https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/plugins/configs/language.ts"; 
-
+import logger from "https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/plugins/configs/add_ons/backend/we_do_a_little_logging.ts";
 // Langwitch v2 had to do a lot of work each time she started up.
 
 // She had to:
@@ -36,5 +36,8 @@ await startLangwitch({
 		binariesFolder:
 			`/Users/ckoshka/programming/rust-experiments/everything/target/release`,
 	},
+	1: cfg => cfg.revise({
+		log: logger("logs.txt")
+	}),
 	3: addCommands,
 });

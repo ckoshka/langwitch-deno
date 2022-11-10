@@ -1,5 +1,6 @@
 import { initialiseMixedBackend } from "../../../backends/mixed/mod.ts";
 import { mergeMultipleBackends } from "../../../backends/pure_typescript/impl_next_contexts.ts";
+import { join } from "../../../deps.ts";
 import { implFileSystem } from "../../../io_effects/mod.ts";
 
 type Filename = string;
@@ -43,10 +44,10 @@ export default (
 			eachWordCallback: (c) => console.log(c),
 		},
 		bins: {
-			dicer: `${binariesFolder}/dicer`,
-			encoder: `${binariesFolder}/langwitch_encode`,
-			frequencyChecker: `${binariesFolder}/frqcheck_opt`,
-			wordlist: `${binariesFolder}/wordlist`,
+			dicer: join(binariesFolder, "dicer"),
+			encoder: join(binariesFolder, "langwitch_encode"),
+			frequencyChecker: join(binariesFolder, "frqcheck_opt"),
+			wordlist: join(binariesFolder, "wordlist"),
 		},
 		...implFileSystem,
 	})

@@ -3,7 +3,7 @@ import { DiffLogger, prettify, Ram, revisable, State } from "../../../deps.ts";
 export default (logFile = "logs.langwitch.txt") => {
 	const loggingFn = Ram.pipe(
 		prettify("app"),
-		(line) => Deno.writeTextFile(logFile, line, { append: true }),
+		(line) => Deno.writeTextFile(logFile, line + "\n", { append: true }),
 	);
 	const Logger = DiffLogger({
 		writeDiffs: loggingFn,
