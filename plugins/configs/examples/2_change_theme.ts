@@ -1,9 +1,9 @@
 // How to: choose a different theme
 
-import { addCommands, startLangwitch } from "../language.ts";
+import { addCommands, startLangwitch } from "https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/plugins/configs/language.ts";
 
 // We need three more imports this time
-import { chroma, interpretComponent, themeColor } from "../../deps.ts";
+import { chroma, interpretComponent, themeColor } from "https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/plugins/deps.ts";
 // chroma is a library for playing around with colours
 // interpretComponent asks what palette you want
 // themeColor can add more visual cohesion to that palette

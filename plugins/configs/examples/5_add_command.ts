@@ -1,9 +1,8 @@
 // give example with usage of the .map - do we really need it though?
 
-import { Message, revisable, State } from "../../deps.ts";
-import { ToMark } from "../../state-transformers/mod.ts";
-import { startLangwitch } from "../language.ts";
-import { MachineWrapper } from "../shared/mod.ts";
+import { Message, revisable, State } from "https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/plugins/deps.ts";
+import { ToMark } from "https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/plugins/state-transformers/mod.ts";
+import { startLangwitch } from "https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/plugins/configs/language.ts";
 
 // This is how you'd make a new command. I'll add explanations for the weirder parts of Typescript's syntax in case you're not sure.
 // A command is just a function that runs before or after a particular phase, like "marking" or "quizzing".

@@ -1,7 +1,7 @@
 import transliterate from "https://esm.sh/@sindresorhus/transliterate@1.5.0";
-import { Rem } from "../../deps.ts";
+import { Rem } from "https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/plugins/deps.ts";
 
-import { startLangwitch } from "../language.ts";
+import { startLangwitch } from "https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/plugins/configs/language.ts";
 
 await startLangwitch({
 	init: {

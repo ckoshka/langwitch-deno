@@ -1,4 +1,4 @@
-import { startLangwitch } from "../language.ts";
+import { startLangwitch } from "https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/plugins/configs/language.ts";
 
 await startLangwitch({
 	init: {
