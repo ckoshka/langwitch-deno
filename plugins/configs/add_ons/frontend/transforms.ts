@@ -1,3 +1,5 @@
+import { romanize } from "../../../deps.ts";
+
 export type MapUserAnswerEffect = {
 	mapUserAnswer: (sentence: string) => string | Promise<string>;
 };
@@ -26,10 +28,10 @@ export const implStringMappings:
 	& MapShownAnswerEffect
 	& MapHintEffect
 	& MapReferenceAnswerEffect = {
-		mapReferenceAnswer: id,
+		mapReferenceAnswer: s => romanize(s.toLowerCase()),
 		mapHint: id,
 		mapShownAnswer: id,
-		mapUserAnswer: id,
+		mapUserAnswer: s => romanize(s.toLowerCase()),
 	};
 
 export const implStringMappingsWithLatency = (ms: number):
