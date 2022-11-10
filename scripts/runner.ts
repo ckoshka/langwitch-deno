@@ -1,7 +1,7 @@
 // yaml config file, shortened commands, nix environment?, commands should have updater?
 
-import { colors } from "../deps.ts";
-import { Html } from "../rendering-plugins/mod.ts";
+import { colors } from "../plugins/deps.ts";
+import { Html } from "../plugins/rendering-plugins/mod.ts";
 
 type ExecutableFilename = string;
 type ShellCommand = string;
@@ -10,6 +10,8 @@ export type CommandMetadata = {
 	update: ShellCommand[];
 	run: ExecutableFilename;
 	desc: string;
+    syntax?: string;
+    examples?: string;
 };
 
 export type Commands = Record<string, CommandMetadata>;
@@ -66,7 +68,7 @@ export const run = (args: string[]) =>
             }
             return await ({
                 add: async () => {
-                    const cmd: CommandMetadata = await fetch(args[2]).then(r => r.json());
+                    const cmd: CommandMetadata = await import(args[2]).then(r => r.default);
                     const proc = Deno.run({ cmd: cmd.update });
 		            await proc.status();
                     styler.log(
@@ -121,7 +123,7 @@ export const run = (args: string[]) =>
 		await proc.status();
 	};
 
-await Deno.readTextFile("lw.config.json").then(JSON.parse).then(run(Deno.args)).then(async result => {
+await import("./lw.config.ts").then(r => r.default).then(run(Deno.args)).then(async result => {
     result ? await Deno.writeTextFile("lw.config.json", JSON.stringify(result, undefined, 3)) : {};
 }).then(() => Deno.exit())
 

@@ -31,6 +31,18 @@ export type CreateDirectoryEffect = {
 	mkdir: (dirname: string) => Promise<void>;
 };
 
+export type ReadEnvironmentalVariableEffect = {
+	readEnv: (varname: string) => string | undefined;
+}
+
+export type WriteEnvironmentalVariableEffect = {
+	writeEnv: (varname: string, value: string) => void;
+}
+
+export type ReadDirectoryEffect = {
+	readDir: (dirname: string) => AsyncIterableIterator<string>;
+}
+
 type BinaryApp = string;
 
 export type BinaryFileReader = {

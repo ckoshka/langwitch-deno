@@ -2,9 +2,12 @@ import {
 	CommandOutputEffect,
 	CreateDirectoryEffect,
 	FileExistsEffect,
+	ReadDirectoryEffect,
+	ReadEnvironmentalVariableEffect,
 	ReadTextFileEffect,
 	RemoveFileEffect,
 	TempFileEffect,
+	WriteEnvironmentalVariableEffect,
 	WriteTextFileEffect,
 } from "./effects.ts";
 import { Dax, ReadFileEffect, run, use } from "./deps.ts";
@@ -71,11 +74,27 @@ export const implCommandOutput: CommandOutputEffect = {
 	},
 };
 
+export const implReadEnv: ReadEnvironmentalVariableEffect = {
+	readEnv: (varname: string) => Deno.env.get(varname)
+}
+
+export const implWriteEnv: WriteEnvironmentalVariableEffect = {
+	writeEnv: (varname: string, val: string) => Deno.env.set(varname, val)
+}
+
 export const ensureDir = (paths: string[]) =>
 	use<CreateDirectoryEffect>().map2(async (fx) => {
 		await Promise.all(paths.map((path) => fx.mkdir(path).catch((_) => {})));
 		return paths;
 	});
+
+export const implReadDir: ReadDirectoryEffect = {
+	readDir: path => (async function* () {
+		for await (const item of Deno.readDir(path)) {
+			if (item.isFile) yield item.name;
+		}
+	})()
+}
 
 export const implFileSystem = {
 	...implCommandOutput,
@@ -86,4 +105,6 @@ export const implFileSystem = {
 	...implReadFile,
 	...implReadTextFile,
 	...implMakeDir,
+	...implReadEnv,
+	...implWriteEnv
 };

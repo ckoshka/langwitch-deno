@@ -2,7 +2,6 @@ export type CoreParams = {
 	flexibility: number; // should be around 0.07
 	initialDecay: number; // should be -0.5
 
-	maxPerSession: number; // defaults to 150
 	maxLearnable: number; // defaults to 3
 	maxConsiderationSize: number; // defaults to 7
 	knownThresholdSeen: number;

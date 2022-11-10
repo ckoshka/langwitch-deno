@@ -1,5 +1,6 @@
 import { Result } from "https://cdn.jsdelivr.net/gh/ckoshka/enums/mod.ts";
-import { Int, int, Maybe, zod } from "../plugins/deps.ts";
+import { Int, int, Maybe, Ram, Rem, zod } from "../../plugins/deps.ts";
+import { getArchive } from "./archive_org.ts";
 
 export type Dataset = {
 	source: string;
@@ -39,17 +40,19 @@ export const Dataset = {
 			? `english-${d.language}-${d.source}-ord${d.ord}-${d.year}`
 			: `english-${d.language}-${d.source}-ord${d.ord}-${d.translator}-${d.year}`;
 	},
-    validator: zod.object({
-        source: zod.string(),
-        ord: zod.number().int(),
-        language: zod.string(),
-        year: zod.number().int(),
-        translator: zod.null().or(zod.string())
-    }),
-    isA: (x: unknown): x is Dataset => {
-        return Dataset.validator.safeParse(x).success;
-    }
+	validator: zod.object({
+		source: zod.string(),
+		ord: zod.number().int(),
+		language: zod.string(),
+		year: zod.number().int(),
+		translator: zod.null().or(zod.string()),
+	}),
+	isA: (x: unknown): x is Dataset => {
+		return Dataset.validator.safeParse(x).success;
+	},
 };
-Dataset.fromStr(`english-interlingua-tatoeba-ord1-2022.tsv`)
-	.map(Dataset.isA)
-    .map(console.log)
+
+export const getDatasets = getArchive().map(
+	Ram.map(Ram.pipe(Ram.prop("name"), Dataset.fromStr, (m) => m.get())),
+)
+	.map(Ram.filter((x) => x != null))

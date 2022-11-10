@@ -2,5 +2,5 @@ import { implParams } from "../../../deps.ts";
 
 export default {
 	...implParams,
-	readLogBase: 1.16,
+	readLogBase: 1.16285,
 };

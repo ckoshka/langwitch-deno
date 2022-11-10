@@ -1,10 +1,3 @@
-// cargo build the necessary packages
-// install git
-// install mpv
-// install deno
-// no, just use nix, none of these need to be installed except deno
-// sync the git repo plugins thing
-
 import $ from "https://deno.land/x/dax@0.9.0/mod.ts";
 
 const buildRustBinaries = async () => {
@@ -26,28 +19,17 @@ const buildRustBinaries = async () => {
 	await $`cd ..`.exportEnv();
 	$.logLight(`Done building targets...`);
 
-	await $`mkdir langwitch-home`;
-	await $`mkdir langwitch-home/concepts`;
-	await $`mkdir langwitch-home/data`;
+	await $`mkdir concepts`;
+	await $`mkdir data`;
 	await $`mv everything/target/release .`;
 	await $`mv release binaries`;
-	await $`mv binaries langwitch-home`;
 	Deno.remove(`everything`, { recursive: true });
 	$.logLight(`Done!`);
 };
 
 const addLangwitch = async () => {
-	await Deno.writeTextFile(
-		`lw`,
-		`#!/bin/bash
-URL="https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/plugins/configs/runner.ts"
-deno run -A --unstable $URL $1 $2`,
-	);
-	await $`chmod +x lw`;
+	
 };
 
 await buildRustBinaries();
 await addLangwitch();
-console.log(
-	"You're ready! Run this:\nlw fetch {language}\nThen this:\nlw learn {language}",
-);

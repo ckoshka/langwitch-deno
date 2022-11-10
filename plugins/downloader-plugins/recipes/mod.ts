@@ -97,3 +97,4 @@ const h2 = SourceBuilder({ fraction: 0.8, filename: "local file.txt" })
 // you just need some function that can produce a unique hash of its outputs before actually performing any side effects (maybe based on arguments + namespace)
 
 // LANGWITCH_HOME_FOLDER  env var?
+// it doesn't need to be this complicated, we just need some kind of ratio thing, we download the files fully, and then once we have the line-count (can save as metadata, maybe pretty-printed line preview thing) we can do the ratios

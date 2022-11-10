@@ -55,11 +55,33 @@ Here are some cases where Langwitch might not be right for you.
 
 ### Requirements
 
-- [Nix](https://nixos.org/download.html)
+- [nix](https://nixos.org/download.html) - ``sh <(curl -L https://nixos.org/nix/install) --daemon``
+    * **How long will it take?** Under 10 minutes
+    * **How likely is it to fail?** Unlikely, but possible. Try ``sh <(curl -L https://nixos.org/nix/install) --no-daemon`` if it doesn't work the first time.
+    * **What does it do?** It's a package manager powerful enough to install other package managers, with guaranteed reproducible builds. It does this in an isolated way.
 
-If Nix fails for some reason (I think I've seen this happen twice)
+If nix fails to build for some reason (this is rare but it does happen), you're in luck. Langwitch can build without nix if you have:
 
-That's it.
+* [cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html) - ``curl https://sh.rustup.rs -sSf | sh``
+    * **How long will it take?** 15-20 mins if I'm remembering right
+    * **How likely is it to fail?** Pretty unlikely. 
+    * **What does it do?** It's the package manager for Rust, and it does a few other things besides
+* [deno](https://deno.land/manual/getting_started/installation) - ``curl -fsSL https://deno.land/x/install/install.sh | sh``
+    * **How long will it take?** 3-7 seconds, depending on your internet speed
+    * **How likely is it to fail?** It just doesn't. Seriously.
+    * **What does it do?** It's a package manager for Javascript and Typescript. It does its job very, very well.
+* [git](https://git-scm.com/downloads) - there's no script, it's just a simple download
+    * **How long will it take?** I have no idea
+    * **How likely is it to fail?** Probably won't, again, I have no idea
+    * **What does it do?** A lot of things, but here we're just using it to copy over some files.
+
+If you would like audio to be enabled, and you don't have nix, you can add [mpv](https://mpv.io/) which is a command-line music-player.
+
+If you haven't done anything like this before, these commands are meant to be typed into a terminal. On Windows, it's called Windows Terminal. On OSX, it's called Terminal. You get the gist.
+
+---
+
+### Important notes
 
 Langwitch doesn't pollute your environment.
 
@@ -67,11 +89,11 @@ The build-step creates some Rust binaries, adds some example configuration files
 
 Langwitch itself is a self-contained script run in an isolated Nix shell. You just need to choose where you want it to live.
 
-Lastly, you need some sentences for it to draw from. By default, it will download at most 5 million sentences covering equal proportions of everything available. 
+Lastly, you need some sentences for it to draw from. By default, it can download at most 5 million sentences covering equal proportions of everything available. If you have more than 4 CPU cores, have lots of storage, or you're willing to put up with a longer boot period, I have tried it with 45 million sentences and it worked fine.
 
-It has general datasets covering the internet, UN transcripts, movie dialogue, novels, Wikipedia, scientific journals, and news articles. It also has topics covering specialised technical vocabulary. 
+It has general datasets covering the internet, UN transcripts, movie dialogue, novels, Wikipedia, scientific journals, news articles, and plenty of other genres. It also has topics covering specialised technical vocabulary. 
 
-See if any pique your interest. You can browse the high-resource directory [here](https://archive.org/download/english-portuguese-statmt) and the low-resource directory [here](https://archive.org/download/bible_alignments_v2) while the installer is running. I've been doing this by myself so far. I would love it if you had anything to contribute.
+See if any pique your interest. You can browse the high-resource directory [here](https://archive.org/download/english-portuguese-statmt) and the low-resource directory [here](https://archive.org/download/bible_alignments_v2) while the installer is running. I've been doing this by myself so far. I would love it if you had anything to contribute! Open up an issue if you do.
 
 ```
 english-armenian-topics_agriculture-ord3-gtrans-2022
@@ -138,4 +160,8 @@ english-armenian-topics_travel-ord3-gtrans-2022
 english-armenian-topics_urban-ord3-gtrans-2022
 ```
 
-Please be careful to weed out any topics you're not interested in. Someone I know was stuck learning about pottery because the pottery dataset is around six times larger than the others.
+Please be careful to weed out any topics you're not interested in. Someone I know was stuck learning about pottery because the pottery dataset is around six times larger than the others (250,000 sentences).
+
+```
+nix-shell -E "import (builtins.fetchurl $url)" --run ""
+```

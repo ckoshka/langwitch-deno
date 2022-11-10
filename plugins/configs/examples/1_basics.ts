@@ -2,7 +2,6 @@
 // Each example in this folder gets gradually more complex
 
 import { addCommands, startLangwitch } from "../language.ts";
-import makeLogger from "../add_ons/backend/we_do_a_little_logging.ts";
 
 // Langwitch v2 had to do a lot of work each time she started up.
 
