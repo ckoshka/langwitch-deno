@@ -88,7 +88,7 @@ export const downloadLanguage = (languageName: string) =>
 				`head -n 3000000`,
 				//`${fx.nosameBinaryPath}`,
 				//`${fx.sorterBinaryPath} --min 0.97 --variety_filter false`,
-				`${fx.deduplicateBinaryPath} --no_punct > ${finalName}`,
+				`${fx.deduplicateBinaryPath} --no_punct | split -l 1000000 - ${finalName}_`,
 				//`lengthfilter --max_chars 260 --max_words 14 `
 				// this should be expressed as part of the configuration
 				// separate command
