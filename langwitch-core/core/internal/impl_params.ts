@@ -1,4 +1,5 @@
 import { ParamsReader } from "../deps.ts";
+import mixer from "./mix_contexts.ts";
 
 export const implParams: ParamsReader = {
 	$params: ({
@@ -10,11 +11,11 @@ export const implParams: ParamsReader = {
 		knownThresholdProbabilityRecall: 0.3,
 		knownThresholdDecayCurve: -0.36,
 		artificialKnownnessFactor: 2,
-		fractionDiscardOldContexts: 0.5,
 		$contexts: {
 			topFractionContextRandomisation: 0.3,
 			lengthPenaltyLog: 0.27,
-			probabilityRandomShuffle: 0.5
+			probabilityRandomShuffle: 0.5,
+			mix: mixer(0.4)
 		}
 	}),
 };

@@ -5,11 +5,11 @@ export const randomise = use<ParamsReader & RandomEffect<0, 1>>().map2(fx => (
 ) => (oldCtxs: [BaseContext, number][]) => {
 	let allScored = oldCtxs.slice();
 	if (fx.random() > fx.$params.$contexts.probabilityRandomShuffle) {
-		allScored = allScored.slice(0, allScored.length /fx.$params.$contexts.topFractionContextRandomisation).sort((
+		allScored = allScored.slice(0, allScored.length * fx.$params.$contexts.topFractionContextRandomisation).sort((
 			_a,
 			_b,
 		) => fx.random() > 0.5 ? 1 : -1).concat(
-			allScored.slice(allScored.length / 3),
+			allScored.slice(allScored.length * fx.$params.$contexts.topFractionContextRandomisation),
 		);
 	}
 	if (allScored[0] && allScored[0][0] === newCtxs[0]) {

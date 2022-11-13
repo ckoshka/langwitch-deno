@@ -127,7 +127,7 @@ export default <T>(validatorFn: (a0: unknown) => a0 is T) =>
 
 					if (validatorFn(meta)) {
 						fx.print([
-							//Cls,
+							Cls,
 							Br,
 							...fx.renderInstruction(),
 							["tertiary", "i believe in you ૮ ˶ᵔ ᵕ ᵔ˶ ა"],

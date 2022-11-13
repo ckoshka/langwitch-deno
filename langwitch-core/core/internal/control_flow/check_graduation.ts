@@ -23,6 +23,25 @@ const noneGraduated = (ids: string[]) => ids.length === 0;
 const atFullLearningCapacity = (max: number) =>
 	(learning: string[]) => learning.length >= max;
 
+
+	/** Rem.uniqBy(
+		queueOfNewItems.concat(
+			s1.queue.slice(
+				Math.floor( // what policy do we want here?
+					Math.max(
+						queueOfNewItems.length *
+						f.$params
+							.fractionDiscardOldContexts,
+						s1.queue.length *
+						f.$params
+							.fractionDiscardOldContexts
+					)
+				),
+			),
+		).filter((c) => c !== undefined),
+		(ctx) => ctx.id,
+	), **/
+
 export const findGraduated = (db: Database) =>
 	(currConcepts: Set<string> | Array<string>) =>
 		use<ParamsReader>().map2((f) =>
@@ -117,23 +136,7 @@ export const checkGraduation = (s1: State) =>
 				.map((rec) => {
 					return {
 						...rec,
-						queue: Rem.uniqBy(
-							queueOfNewItems.concat(
-								s1.queue.slice(
-									Math.floor(
-										Math.max(
-											queueOfNewItems.length *
-											f.$params
-												.fractionDiscardOldContexts,
-											s1.queue.length *
-											f.$params
-												.fractionDiscardOldContexts
-										)
-									),
-								),
-							).filter((c) => c !== undefined),
-							(ctx) => ctx.id,
-						),
+						queue: f.$params.$contexts.mix(s1.queue)(queueOfNewItems),
 					};
 				})
 				.map((rec) => {
