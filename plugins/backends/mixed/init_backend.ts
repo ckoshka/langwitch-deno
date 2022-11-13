@@ -10,7 +10,7 @@ import { languageConfig } from "../../preprocessing/language/preproc.ts";
 import { processLine, tokenize } from "../../preprocessing/mod.ts";
 import { LanguageMetadata } from "../../state-transformers/mod.ts";
 import { initJsQuerier } from "../pure_typescript/impl_next_contexts.ts";
-import { AsyncGen, fast1a32, int, ReadFileEffect, Rem, use } from "./deps.ts";
+import { AsyncGen, fast1a32, int, ReadFileEffect, Rem, SyncGen, use } from "./deps.ts";
 import { InitialiseMixedBackendArgs } from "./types.ts";
 
 export const makeFilenames = (filename: string) => {
@@ -88,26 +88,21 @@ export const createMixedBackend = (desiredWords: string[]) =>
 				line.split("\t") as [string, string]
 			);
 
-			let counter = 0;
-
 			//const filteredCtxs = args.filterCtxs(pairs);
 
-			const ctxs = await Rem.pipe(
+			const ctxs = Rem.pipe(
 				pairs,
-				AsyncGen.fromIter,
+				SyncGen.fromIter,
 				// so the filtering step should happen here
-				AsyncGen.map((line) => {
+				SyncGen.map((line) => {
 					return toContext(
 						fast1a32(line[1]) as int,
 						line.join("\t"),
 					);
 				}),
-				AsyncGen.filter((ctx) => ctx.isSome()),
-				AsyncGen.map((ctx) => {
-					counter += 1;
-					return ctx.get();
-				}),
-				AsyncGen.toArray,
+				SyncGen.filter((ctx) => ctx.isSome()),
+				SyncGen.map((ctx) => ctx.get()),
+				SyncGen.toArray,
 			);
 			// the id numbers are misaligned now.
 			fx.removeFile(desiredWordsFile);

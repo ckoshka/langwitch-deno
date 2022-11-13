@@ -48,7 +48,7 @@ export const implRenderFeedback = (
 					data.userAnswer.length > 0 ? data.userAnswer : " ",
 				),
 			]).then(async ([shownAnswer, userAnswer]) => [
-				Cls,
+				//Cls,
 				Br,
 				["primary", "(❀ˆᴗˆ) my translation is:"],
 				["secondary italic", `${metadata.front}`],

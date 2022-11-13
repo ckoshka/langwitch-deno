@@ -9,6 +9,6 @@ export default (logFile = "logs.langwitch.txt") => {
 		writeDiffs: loggingFn,
 	})({});
 	return (state: State) => {
-		Logger.update(revisable(state).delete("queue").contents);
+		Logger.update(revisable(state).extend(({queue}) => ({totalInQueue: queue.length})).delete("queue").contents);
 	};
 };

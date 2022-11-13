@@ -17,9 +17,9 @@ export type NextStateEffects = EffectsOf<
 export default use<NextStateEffects & UserInputEffect<Promise<string>>>().map2((
 	fx,
 ) => async (m: Message<ToProcess, State>) => {
+	await fx.ask("press enter to continue");
 	const state = nextState(m.state)(m.data.results as MarkedResult)
 		.run(fx);
-	await fx.ask("press enter to continue");
 	return revisable(m).revise({
 		state: await state,
 		next: "quiz",

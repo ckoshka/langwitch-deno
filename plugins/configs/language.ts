@@ -199,6 +199,6 @@ export const startLangwitch = async <A, B, C>(cfg: LangwitchConfig<A, B, C>) => 
 		...L0.contents,
 		...L1.contents,
 		...L2.contents,
-	}).catch(console.error);
+	})//.catch(console.error);
 };
 //TODO: Tap into the backend?

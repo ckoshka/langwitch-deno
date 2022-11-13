@@ -9,6 +9,8 @@ export const ContextHolder = async (ctxs: BaseContext[]) => {
 	});
 	const worker = Comlink.wrap<CtxWorker>(w1);
 
+	let isExhausted = false;
+
 	worker.add(
 		ctxs.map((c) => ({
 			id: c.id,
@@ -16,11 +18,15 @@ export const ContextHolder = async (ctxs: BaseContext[]) => {
 		})),
 	);
 
-	return {
+	const self = {
 		getNextConcepts: async (
 			knownsIterable: Iterable<string>,
 			n: number,
 		): Promise<Set<string>> => {
+			if (isExhausted) {
+				return new Set();
+			}
+
 			const knowsAsInts = new Set(
 				Array.from(knownsIterable).map(hasher.hash),
 			);
@@ -43,6 +49,12 @@ export const ContextHolder = async (ctxs: BaseContext[]) => {
 					break;
 				}
 			}
+
+			if (set.size === 0) {
+				isExhausted = true;
+				await self.shutdown();
+			}
+
 			return set;
 		},
 
@@ -51,11 +63,21 @@ export const ContextHolder = async (ctxs: BaseContext[]) => {
 			focus: Iterable<string>,
 			maxLen = 1,
 		): Promise<Array<int>> => {
+			if (isExhausted) {
+				return [];
+			}
+
 			const ids = await worker.hasFocusConcepts(
 				new Set(Array.from(knowns).map(hasher.hash)),
 				Array.from(focus).map(hasher.hash),
 				maxLen,
 			);
+
+			if (ids.length === 0) {
+				isExhausted = true;
+				await self.shutdown();
+			}
+
 			//const all = new Set([...knowns, ...focus]);
 			return ids
 				//.filter(i => Array.from(i.all).map(hasher.unhash).filter(x => !all.has(x)).length === 0)
@@ -72,4 +94,6 @@ export const ContextHolder = async (ctxs: BaseContext[]) => {
 			await worker.emptySelf();
 		},
 	};
+
+	return self;
 };

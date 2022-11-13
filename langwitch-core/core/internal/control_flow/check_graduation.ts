@@ -1,3 +1,4 @@
+import { Ram, Rem } from "../../../../plugins/deps.ts";
 import {
 	BaseContext,
 	Concept,
@@ -19,11 +20,11 @@ import {
 } from "./sort_into_learned_vs_known.ts";
 
 const noneGraduated = (ids: string[]) => ids.length === 0;
-const atFullLearningCapacity = (max: number) => (learning: string[]) =>
-	learning.length >= max;
+const atFullLearningCapacity = (max: number) =>
+	(learning: string[]) => learning.length >= max;
 
-export const findGraduated =
-	(db: Database) => (currConcepts: Set<string> | Array<string>) =>
+export const findGraduated = (db: Database) =>
+	(currConcepts: Set<string> | Array<string>) =>
 		use<ParamsReader>().map2((f) =>
 			Array.from(currConcepts).filter((cid) => {
 				const c = db.concepts[cid];
@@ -108,17 +109,31 @@ export const checkGraduation = (s1: State) =>
 				i++;
 			}
 
+			// blowing up to 11k?????
+
 			return updateDbWithNew(s1.db.concepts)(proposedForLearning).map(
 				(updates) => ({ updates }),
 			)
 				.map((rec) => {
 					return {
 						...rec,
-						queue: queueOfNewItems.concat(
-							s1.queue.slice(
-								Math.floor(queueOfNewItems.length * f.$params.fractionDiscardOldContexts),
-							),
-						).filter((c) => c !== undefined),
+						queue: Rem.uniqBy(
+							queueOfNewItems.concat(
+								s1.queue.slice(
+									Math.floor(
+										Math.max(
+											queueOfNewItems.length *
+											f.$params
+												.fractionDiscardOldContexts,
+											s1.queue.length *
+											f.$params
+												.fractionDiscardOldContexts
+										)
+									),
+								),
+							).filter((c) => c !== undefined),
+							(ctx) => ctx.id,
+						),
 					};
 				})
 				.map((rec) => {
