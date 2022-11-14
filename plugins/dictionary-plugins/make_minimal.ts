@@ -21,4 +21,4 @@ console.log(`Okay, I'm preparing the data now. It will be called ${colors.bold(o
 await runMinimal("sentences.txt", outFile);
 
 console.log(`Done now, run this to open the interactive sentence looker-upper:
-deno run -A --unstable `)
+deno run -A --unstable https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/plugins/dictionary-plugins/load.ts ${outFile}`);
