@@ -10,7 +10,15 @@ import { languageConfig } from "../../preprocessing/language/preproc.ts";
 import { processLine, tokenize } from "../../preprocessing/mod.ts";
 import { LanguageMetadata } from "../../state-transformers/mod.ts";
 import { initJsQuerier } from "../pure_typescript/impl_next_contexts.ts";
-import { AsyncGen, fast1a32, int, ReadFileEffect, Rem, SyncGen, use } from "./deps.ts";
+import {
+	AsyncGen,
+	fast1a32,
+	int,
+	ReadFileEffect,
+	Rem,
+	SyncGen,
+	use,
+} from "./deps.ts";
 import { InitialiseMixedBackendArgs } from "./types.ts";
 
 export const makeFilenames = (filename: string) => {
@@ -28,7 +36,9 @@ export const preprocessTsv = () =>
 		& CommandOutputEffect
 	>()
 		.map2(async (fx) => {
-			const { encodings, dict } = makeFilenames(fx.$backend.sentencesFile);
+			const { encodings, dict } = makeFilenames(
+				fx.$backend.sentencesFile,
+			);
 
 			await fx.fileExists(encodings).then(async (exists) =>
 				!exists

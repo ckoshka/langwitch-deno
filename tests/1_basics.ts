@@ -1,8 +1,8 @@
 // Here's a minimal config – nothing fancy, just the defaults + explanations.
 // Each example in this folder gets gradually more complex
 
-import { addCommands, startLangwitch } from "https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/plugins/configs/language.ts";
-import logger from "https://raw.githubusercontent.com/ckoshka/langwitch-deno/master/plugins/configs/add_ons/backend/we_do_a_little_logging.ts";
+import { addCommands, startLangwitch } from "../plugins/configs/language.ts"; 
+import logger from "../plugins/configs/add_ons/backend/we_do_a_little_logging.ts";
 // Langwitch v2 had to do a lot of work each time she started up.
 
 // She had to:
@@ -36,8 +36,14 @@ await startLangwitch({
 		binariesFolder:
 			`/Users/ckoshka/programming/rust-experiments/everything/target/release`,
 	},
+	0: cfg => cfg.revise({
+		saveConcepts: async () => {},
+		loadConcepts: async () => ({}),
+		
+	}),
 	1: cfg => cfg.revise({
 		log: logger("logs.txt")
 	}),
+	2: cfg => cfg.revise({}),
 	3: addCommands,
 });

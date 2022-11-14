@@ -9,7 +9,7 @@ class Narrow<T extends Record<string, string>> {
 	}
 }
 
-const isTrue = (bool: boolean): bool is true => {
+const isTrue = (bool: boolean): true => {
 	if (!bool) {
 		throw new Error();
 	}
@@ -17,6 +17,7 @@ const isTrue = (bool: boolean): bool is true => {
 };
 
 const n = new Narrow({});
-isTrue(n.hasProp("hi"));
+if (isTrue(n.hasProp("hi"))) {
 
-const x = n;
+	const x = n;
+}
