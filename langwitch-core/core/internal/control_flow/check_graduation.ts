@@ -1,4 +1,3 @@
-import { Ram, Rem } from "../../../../plugins/deps.ts";
 import {
 	BaseContext,
 	Concept,
@@ -12,17 +11,18 @@ import {
 	State,
 	StateCalculationEffects,
 	TapEffect,
-	use,
+	use
 } from "../../deps.ts";
 import {
 	updateDbWithNew,
-	updateLearnedAndKnown,
+	updateLearnedAndKnown
 } from "./sort_into_learned_vs_known.ts";
 
 const noneGraduated = (ids: string[]) => ids.length === 0;
 const atFullLearningCapacity = (max: number) =>
 	(learning: string[]) => learning.length >= max;
 
+/** Finds concepts above the known threshold*/
 export const findGraduated = (db: Database) =>
 	(currConcepts: Set<string> | Array<string>) =>
 		use<ParamsReader>().map2((f) =>
@@ -32,6 +32,11 @@ export const findGraduated = (db: Database) =>
 			})
 		);
 
+/** 
+ * Checks if any concepts have "graduated" to become known.
+ * If so, it will take those concepts out of the learn queue and into the known queue.
+ * It will then replace those concepts, and refresh the contexts.
+*/
 export const checkGraduation = (s1: State) =>
 	use<
 		& ParamsReader

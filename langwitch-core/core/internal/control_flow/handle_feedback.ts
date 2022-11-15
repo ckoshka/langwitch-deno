@@ -9,6 +9,9 @@ import {
 } from "../../deps.ts";
 import { getUpdatedConcepts } from "../core/update_concepts.ts";
 
+/**
+ * Reorders the queue via the sortContexts effect.
+ */
 export const updateTopContext = (s1: State) =>
 	use<LoggerEffect & SortContextsEffect>().map2((fx) =>
 		fx.sortContexts(s1)(s1.queue)
@@ -28,6 +31,9 @@ export const updateTopContext = (s1: State) =>
 			},
 		);
 
+/**
+ * Accepts a list of scores for concepts, updates those concepts immutably.
+ */
 export const markAndUpdate = (s1: State) => (scores: MarkedResult) =>
 	getUpdatedConcepts(s1.db)(scores)
 		.map((toUpdate) =>

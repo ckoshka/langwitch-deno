@@ -1,6 +1,9 @@
 import { Concept, ConceptData, CoreEffects, use } from "../../deps.ts";
 import { adjust } from "./memory.ts";
 
+/**
+ * Takes CoreEffect and creates a new derived effect that allows you to mark a concept as either known or new artificially.
+ */
 export const useMarkers = use<CoreEffects>().extendF((f) => ({
 	markNew: (data: { name: string }) => {
 		const newConcept = {
@@ -25,7 +28,7 @@ export const useMarkers = use<CoreEffects>().extendF((f) => ({
 	}),
 }));
 
-export const validateRange = (min: number, max: number) => (n: number) => {
+const validateRange = (min: number, max: number) => (n: number) => {
 	if (n < min || n > max) {
 		throw new Error(
 			`The number provided (${n}) was out of range of (${min}, ${max})`,
@@ -33,6 +36,9 @@ export const validateRange = (min: number, max: number) => (n: number) => {
 	}
 };
 
+/**
+ * Adjusts a concept's decayCurve according to a provided accuracy score.
+ */
 export const mark = (concept: Concept) => (accuracy: number) => {
 	validateRange(0, 1)(accuracy);
 	//accuracy *= 0.98;

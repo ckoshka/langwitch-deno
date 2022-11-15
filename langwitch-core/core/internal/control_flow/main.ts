@@ -8,6 +8,9 @@ export const handleSessionRefresh = (s1: State) =>
 		updateTopContext(s3)
 	);
 
+/**
+ * Marks concepts, checks if any have graduated, and reorders the contexts.
+ */
 export const nextState = (s1: State) => (feedback: MarkedResult) =>
 	markAndUpdate(s1)(feedback)
 		.chain((s2) => checkGraduation(s2))

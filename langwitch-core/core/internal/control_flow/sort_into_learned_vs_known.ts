@@ -1,6 +1,9 @@
 import { Concept } from "../../deps.ts";
 import { useMarkers } from "../core/mark_concepts.ts";
 
+/**
+ * Utility function for sorting concepts into known vs learning.
+ */
 export const updateLearnedAndKnown = (
 	learnedBefore: Iterable<string>,
 	knownBefore: Iterable<string>,
@@ -15,6 +18,9 @@ export const updateLearnedAndKnown = (
 	return { learning, known };
 };
 
+/**
+ * Adds new concepts to the database.
+ */
 export const updateDbWithNew =
 	(rec: Record<string, Concept>) => (learning: Iterable<string>) =>
 		useMarkers.map2((f) =>

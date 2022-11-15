@@ -15,6 +15,13 @@ import {
 export const calcLog = (base: number) => (x: number) =>
 	Math.log(x) / Math.log(base);
 
+/**
+ * A family of functions that accept a logarithmic base for initialisation.
+ * - **fit**: estimates a decay curve that would fit the accuracy provided
+ * - **remodel**: takes the old decay curve and a new decay curve and returns a weighted average of the two
+ * - **predict**: estimates how likely the user is to recall a concept at a given point in time
+ * - **halfLife**: estimates when a concept will have a recall probability of n (unit float)
+ */
 export const Mem = ({ logBase } = { logBase: 1.168 }) => {
 	const fit = ({ memory, recordedAt, accuracy }: FitMemoryArgs) =>
 		calcLog(logBase)(accuracy) / (recordedAt - memory.lastSeen);
@@ -32,6 +39,9 @@ export const Mem = ({ logBase } = { logBase: 1.168 }) => {
 	return { fit, remodel, predict, halfLife };
 };
 
+/**
+ * Adjusts a memory to a given accuracy according to specified parameters.
+ */
 export const adjust = (c: Memory) => (accuracy: number) =>
 	use<
 		& TimeEffect<{ hoursFromEpoch: number }>

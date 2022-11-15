@@ -1,6 +1,9 @@
 import { mark } from "./mark_concepts.ts";
 import { Concept, Database, Free } from "../../deps.ts";
 
+/**
+ * Marks every specified concept, returns new versions of those concepts.
+ */
 export const getUpdatedConcepts =
 	(db: Database) => (scores: [string, number][]) =>
 		Free.flatten(
