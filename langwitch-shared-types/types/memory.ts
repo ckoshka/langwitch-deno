@@ -1,7 +1,7 @@
 import { ReadEffect } from "../deps.ts";
 
 export type Hours = number;
-export interface Memory {
+export type Memory = {
 	lastSeen: Hours;
 	decayCurve: number;
 }

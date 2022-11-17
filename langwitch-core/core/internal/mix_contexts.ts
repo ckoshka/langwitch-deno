@@ -4,7 +4,7 @@ import { BaseContext } from "../deps.ts";
 /**
  * Mixes old contexts with new contexts, deduplicates them, and discards a fraction of the old contexts.
  */
-export default (turnoverRate = 0.5) =>
+export const mixContexts = (turnoverRate = 0.5) =>
 	(oldCtxs: BaseContext[]) =>
 		(newCtxs: BaseContext[]) => {
 			const retainCount = Math.round(
@@ -14,9 +14,9 @@ export default (turnoverRate = 0.5) =>
 				),
 			);
 			return Rem.uniqBy(
-				newCtxs.concat(
-					oldCtxs.slice(retainCount),
-				).filter((c) => c !== undefined),
+				oldCtxs.slice(retainCount).concat(newCtxs).filter((c) =>
+					c !== undefined
+				),
 				(ctx) => ctx.id,
 			);
 		};

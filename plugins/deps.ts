@@ -52,7 +52,6 @@ export * from "../langwitch-core/core/mod.ts";
 export * from "../langwitch-shared-types/mod.ts";
 export * from "../misc-packages-2/await_record/mod.ts";
 export * from "../misc-packages-2/ensure/mod.ts";
-export * from "../misc-packages-2/free_utils/mod.ts";
 export * from "../misc-packages-2/state_machine_2/mod.ts";
 export * from "../misc-packages-2/utils/mod.ts";
 export * from "../misc-packages-2/seg/mod.ts";

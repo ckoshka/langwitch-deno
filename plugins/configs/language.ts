@@ -73,7 +73,7 @@ export const addSave = <F, D>(machine: MachineWrapper<F, D>) =>
 
 export const addStats = <F, D>(machine: MachineWrapper<F, D>) =>
 	machine
-		.appendF("quiz", Has);
+		.appendF("quiz", Stats());
 
 export const addExtraHinter = <F, D>(machine: MachineWrapper<F, D>) =>
 	machine.appendF("quiz", Has);

@@ -1,5 +1,5 @@
 import { LanguageMetadata } from "../../context-types/mod.ts";
-import { makeHint, Message, Phase, State, use } from "../../deps.ts";
+import { makeHint, Message, State, use } from "../../deps.ts";
 import { GetMetadataEffect } from "../../helpers/effects/metadata.ts";
 import { PrinterEffect } from "../../helpers/effects/print.ts";
 import { ToMark } from "../message_types.ts";
