@@ -6,21 +6,28 @@ import {
 	ToProcess,
 } from "../../../../state-transformers/mod.ts";
 import { Cache } from "../../../shared/cache.ts";
+import { isLanguageMetadata } from "../../../shared/mod.ts";
 
 export type SpeakEffect = {
-	runSpeak: (sentence: string, speak: boolean) => void;
+	runSpeak: (data: SpeechReq, speak: boolean) => void;
 };
 
-export default (
-	msg: Message<ToProcess, State>,
-) => use<SpeakEffect & GetMetadataEffect<LanguageMetadata>>().map2((fx) => {
-	const sentence = fx.getMetadata(msg.state.queue[0].id).back;
-	fx.runSpeak(sentence, true);
-	msg.state.queue.map((c) => c.id).map(fx.getMetadata).map((c) =>
-		fx.runSpeak(c.back, false)
-	);
-	return msg;
-});
+export default (req: Omit<SpeechReq, "messages">) => use<SpeakEffect>().map2((fx) =>
+	async (
+		msg: Message<ToProcess, State>,
+	) => {
+		const meta = msg.state.queue[0].metadata;
+		if (isLanguageMetadata(meta)) {
+			fx.runSpeak({messages: meta.tts, ...req}, true);
+			// cache
+			for (const ctx of msg.state.queue) {
+				const meta2 = ctx.metadata;
+				if (isLanguageMetadata(meta2)) fx.runSpeak({messages: meta2.tts, ...req}, false);
+			}
+		}
+		return msg;
+	}
+);
 
 export type AudioEffect = {
 	playAudio: (audio: Uint8Array) => void;
@@ -28,20 +35,16 @@ export type AudioEffect = {
 
 // layer 2
 export const implSpeak = (
-	fx: AudioEffect & {
-		$tts: Omit<SpeechReq, "messages">
-	},
+	fx: AudioEffect
 ): SpeakEffect => {
-	const cache = Cache<string, Maybe<Uint8Array>>({
-		getter: (s: string) => ttsClient.post({
-			...fx.$tts,
-			messages: s,
-		})
+	const cache = Cache<SpeechReq, Maybe<Uint8Array>>({
+		getter: (s: SpeechReq) =>
+			ttsClient.post(s),
 	});
 	return {
 		runSpeak: async (s, speak) => {
 			const result = await cache.get(s);
-			result.map(audio => {
+			result.map((audio) => {
 				if (speak && audio.length !== 0) {
 					fx.playAudio(audio);
 				}
@@ -55,7 +58,7 @@ export const implSpeak = (
 export const implAudio = ({ mpvPath }: { mpvPath: string }) => ({
 	playAudio: async (audio: Uint8Array) => {
 		const proc = Deno.run({
-			cmd: [mpvPath, `--volume=83`, `-`],
+			cmd: [mpvPath, `--volume=75`, `-`],
 			stdin: "piped",
 			stdout: "null",
 			stderr: "null",

@@ -72,5 +72,8 @@ await startLangwitch({
 		binariesFolder:
 			`/Users/ckoshka/programming/rust-experiments/everything/target/release`,
 	},
+	1: cfg => cfg.modify(c => {
+		c.commands.push(["!w", "search a word on wiktionary (!w word)"])
+	}),
 	3: m => m.append("quiz", Wiktionary("Venetian")("!w")),
 });

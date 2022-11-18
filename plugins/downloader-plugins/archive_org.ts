@@ -92,6 +92,7 @@ export const downloadLanguage = (languageName: string) =>
 				`paste -d "\\n" ${names.join(" ")}`,
 				`grep . `,
 				`head -n 3000000`,
+				`${join(fx.homeFolder, "binaries", "dedup")}`,
 				//`${fx.nosameBinaryPath}`,
 				//`${fx.sorterBinaryPath} --min 0.97 --variety_filter false`,
 				`split -l 1000000 - ${finalName}_`,

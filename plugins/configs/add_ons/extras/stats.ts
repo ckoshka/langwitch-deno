@@ -69,7 +69,8 @@ export default () => {
 					await fx.print(learnRate(newAvg));
 				}
 			}
-
+			// this could instead be:
+			// concepts.filter(c => c.learnedDate > 1 hour ago).count
 			const graduatedWords = known.update(m.state.known, notNew);
 			notNew = false;
 			if (graduatedWords.length > 0) {

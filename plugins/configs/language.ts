@@ -137,6 +137,13 @@ export const L1Config = revisable({
 	...implMeasurePartialSimilarity,
 	...implFileSystem,
 	exit: () => Deno.exit(),
+	...implAudio({mpvPath: "mpv"}),
+	commands: [
+		["!k", "mark known - !k word1 word2"],
+		["!x", "exit"],
+		["!r", "remove sentence"],
+		["!has", "check if the sentence has a word - !has noche"],
+	]
 });
 
 export const createL2Config = async (
@@ -145,17 +152,13 @@ export const createL2Config = async (
 	...await implCreateHintMap(fxs),
 	...implRenderHint(fxs),
 	...implMarkUserAnswer(fxs),
-	...implRenderCommands([
-		["!k", "mark known - !k word1 word2"],
-		["!x", "exit"],
-		["!r", "remove sentence"],
-		["!has", "check if the sentence has a word - !has noche"],
-	]),
+	...implRenderCommands(fxs.commands as [string, string][]),
 	...implRenderCue,
 	...implRenderFeedback(fxs),
 	...implRenderInstruction,
 	sortContexts: (state: State) => (ctxs: BaseContext[]) =>
 		sorter(state)(ctxs).run(fxs),
+	...implSpeak(fxs)
 });
 
 type Depromisify<T> = T extends Promise<infer K> ? K : never;
