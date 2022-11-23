@@ -5,7 +5,7 @@ export const implParams: ParamsReader = {
 	$params: ({
 		maxLearnable: 3,
 		maxConsiderationSize: 12,
-		flexibility: 0.0854,
+		flexibility: 0.0954,
 		initialDecay: -0.50,
 		knownThresholdSeen: 3,
 		knownThresholdProbabilityRecall: 0.3,

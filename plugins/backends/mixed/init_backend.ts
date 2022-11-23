@@ -98,10 +98,10 @@ export const createMixedBackend = (desiredWords: string[]) =>
 				line.split("\t") as [string, string]
 			);
 
-			//const filteredCtxs = args.filterCtxs(pairs);
+			const filteredCtxs = fx.$backend.filterCtxs(pairs);
 
 			const ctxs = Rem.pipe(
-				pairs,
+				filteredCtxs,
 				SyncGen.fromIter,
 				// so the filtering step should happen here
 				SyncGen.map((line) => {

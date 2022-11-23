@@ -14,7 +14,7 @@ export const mixContexts = (turnoverRate = 0.5) =>
 				),
 			);
 			return Rem.uniqBy(
-				oldCtxs.slice().reverse().slice(retainCount).concat(newCtxs).filter((c) =>
+				oldCtxs.slice(retainCount).concat(newCtxs).filter((c) =>
 					c !== undefined
 				),
 				(ctx) => ctx.id,

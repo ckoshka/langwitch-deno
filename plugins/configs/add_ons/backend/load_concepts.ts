@@ -5,7 +5,7 @@ export default (conceptsFilename: string) => ({
 	loadConcepts: () =>
 		Deno.readTextFile(conceptsFilename)
 			.then(JSON.parse)
-			.then(Rem.filter((c: Concept) => c.timesSeen > 3))
-			.then(makeRecord((c) => c.name))
+			//.then(Rem.filter((c: Concept) => c.timesSeen > 3))
+			.then(makeRecord((c: Concept) => c.name))
 			.catch(() => ({})),
 });

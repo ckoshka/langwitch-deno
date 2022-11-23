@@ -26,8 +26,7 @@ export const fetchBinary = async (d: ReleaseURLData) => {
     const outName = repoName + d.platform === "linux" ? `.tar.gz` : ".zip";
     const finalName = repoName + d.platform === "win32" ? ".exe" : "";
     await fetch(url).then(r => r.arrayBuffer()).then(a => new Uint8Array(a)).then(a => Deno.writeFile(outName, a));
-    d.platform === "linux" ? await tgz.uncompress(outName, finalName) : await unZipFromFile(outName);
-	return finalName;
+    return d.platform === "linux" ? (await tgz.uncompress(outName, finalName), finalName) : await unZipFromFile(outName);
 };
 
 // it would be a lot clearer and require fewer file-system gimmicks to just do this part in nix and assume it to be part of the environment instead of explicitly passing in the values at runtime

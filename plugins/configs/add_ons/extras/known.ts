@@ -20,7 +20,7 @@ export default (keyBinding = "!k") =>
 		if (
 			m.data?.userAnswer?.toLowerCase().trim().startsWith(keyBinding)
 		) {
-			const conceptsToMarkKnown = m.data.userAnswer.split(" ").slice(1);
+			const conceptsToMarkKnown = m.data.userAnswer === keyBinding ? [] : m.data.userAnswer.split(" ").slice(1);
 
 			const newState = await markKnown(m.state)(conceptsToMarkKnown).run(fx);
 
