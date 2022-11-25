@@ -54,7 +54,7 @@ export const checkGraduation = (s1: State) =>
 			f.log(s1);
 
 			if (
-				noneGraduated(graduatedIds) &&
+				noneGraduated(graduatedIds) ||
 				atFullLearningCapacity(f.$params.maxLearnable)(
 					s1.learning,
 				)

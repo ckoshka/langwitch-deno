@@ -21,7 +21,7 @@ const sortConcepts = (concepts: Array<Concept>) =>
 	);
 
 /**
- * Initialises an empty State from a concept database
+ * Initialises an empty State from a concept database and sorts those concepts into either known or learning.
  */
 export const refresh = (db: Database) =>
 	sortConcepts(Object.values(db.concepts)).map(([known, learning]) => ({
