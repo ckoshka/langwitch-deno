@@ -2,7 +2,7 @@ import { Concept, CoreEffects, Database, use } from "../../deps.ts";
 import { Mem } from "../core/memory.ts";
 
 /**
- * At the start of each session, this resorts concepts into either "known" or "learning".
+ * At the start of each session, this resorts concepts into either "known" or "learning". Removed from v2.7
  */
 const sortConcepts = (concepts: Array<Concept>) =>
 	use<CoreEffects>().map2(
@@ -11,7 +11,8 @@ const sortConcepts = (concepts: Array<Concept>) =>
 			const learning: string[] = [];
 			const { predict } = Mem({ logBase: f.readLogBase });
 			concepts.forEach((c) =>
-				predict({ when: f.now().hoursFromEpoch, memory: c }) > f.$params.knownThresholdProbabilityRecall &&
+				predict({ when: f.now().hoursFromEpoch, memory: c }) >
+						f.$params.knownThresholdProbabilityRecall &&
 					c.timesSeen >= f.$params.knownThresholdSeen //! sacrifices purity and also parameterisation
 					? known.push(c.name)
 					: learning.push(c.name)
@@ -21,12 +22,11 @@ const sortConcepts = (concepts: Array<Concept>) =>
 	);
 
 /**
- * Initialises an empty State from a concept database and sorts those concepts into either known or learning.
+ * Initialises an empty State from a concept database.
  */
-export const refresh = (db: Database) =>
-	sortConcepts(Object.values(db.concepts)).map(([known, learning]) => ({
-		db,
-		known,
-		learning,
-		queue: [],
-	}));
+export const refresh = (db: Database) => ({
+	db,
+	known: Object.keys(db.concepts),
+	learning: [],
+	queue: [],
+});

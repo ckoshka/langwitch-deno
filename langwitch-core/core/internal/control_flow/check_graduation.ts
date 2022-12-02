@@ -31,7 +31,8 @@ export const findGraduated = (db: Database) =>
 				return c.decayCurve > f.$params.knownThresholdDecayCurve; //?????
 			})
 		);
-
+// so this inconsistency did come back to bite me...
+// no, it shouldn't sort in refresh. just all known.
 /** 
  * Checks if any concepts have "graduated" to become known.
  * If so, it will take those concepts out of the learn queue and into the known queue.
@@ -54,7 +55,7 @@ export const checkGraduation = (s1: State) =>
 			f.log(s1);
 
 			if (
-				noneGraduated(graduatedIds) ||
+				noneGraduated(graduatedIds) &&
 				atFullLearningCapacity(f.$params.maxLearnable)(
 					s1.learning,
 				)

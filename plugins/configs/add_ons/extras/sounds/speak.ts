@@ -7,6 +7,7 @@ import {
 } from "../../../../state-transformers/mod.ts";
 import { Cache } from "../../../shared/cache.ts";
 import { isLanguageMetadata } from "../../../shared/mod.ts";
+export * from "./audio_mpv.ts";
 
 export type SpeakEffect = {
 	runSpeak: (data: SpeechReq, speak: boolean) => void;
@@ -55,20 +56,7 @@ export const implSpeak = (
 
 // layer 1
 // meaning mpvPath must be in layer 0
-export const implAudio = ({ mpvPath }: { mpvPath: string }) => ({
-	playAudio: async (audio: Uint8Array) => {
-		const proc = Deno.run({
-			cmd: [mpvPath, `--volume=75`, `-`],
-			stdin: "piped",
-			stdout: "null",
-			stderr: "null",
-		});
-		await proc.stdin.write(audio);
-		proc.stdin.close();
-		await proc.status();
-		proc.close();
-	},
-});
+
 
 //await Deno.readFile(`/Users/ckoshka/programming/langwitch/plugins/context-plugins/implementors/addons/correct.mp3`).then(implAudio.playAudio);
 

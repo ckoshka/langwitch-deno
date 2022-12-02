@@ -49,7 +49,7 @@ import { isLanguageMetadata, MachineWrapper } from "./shared/mod.ts";
 
 const createState = use<LoadConceptsEffect>()
 	.map2((fx) => fx.loadConcepts())
-	.chain((concepts) => refresh({ concepts }))
+	.map((concepts) => refresh({ concepts }))
 	.chain(checkGraduation)
 	.chain(updateTopContext);
 
