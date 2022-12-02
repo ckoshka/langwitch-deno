@@ -1,4 +1,4 @@
-export const implAudio = {
+export const implAudioReplit = {
 	playAudio: async (audio: Uint8Array) => {
         const temp = await Deno.makeTempFile();
         await Deno.writeFile(temp, audio);
@@ -22,6 +22,6 @@ export const implAudio = {
 		await proc.status();
 		proc.close();
 
-        await Deno.remove(temp);
+    await Deno.remove(temp);
 	},
 };

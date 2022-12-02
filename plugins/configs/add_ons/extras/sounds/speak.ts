@@ -8,6 +8,7 @@ import {
 import { Cache } from "../../../shared/cache.ts";
 import { isLanguageMetadata } from "../../../shared/mod.ts";
 export * from "./audio_mpv.ts";
+export * from "./audio_replit.ts";
 
 export type SpeakEffect = {
 	runSpeak: (data: SpeechReq, speak: boolean) => void;
