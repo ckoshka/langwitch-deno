@@ -3,7 +3,7 @@ export const implAudioReplit = {
         const temp = await Deno.makeTempFile();
         await Deno.writeFile(temp, audio);
 		const proc = Deno.run({
-			cmd: ["bash", "-c", `{
+			cmd: ["bash", "-c", `echo '{
                 "Paused": false,
                 "Name": "${temp}",
                 "Type": "mp3",
@@ -12,7 +12,7 @@ export const implAudioReplit = {
                 "Args": {
                   "Path": "${temp}"
                 }
-              } > /tmp/audio`],
+              }' > /tmp/audio`],
 			stdin: "piped",
 			stdout: "null",
 			stderr: "null",
