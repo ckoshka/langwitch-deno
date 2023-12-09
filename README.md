@@ -1,3 +1,18 @@
+# !!
+
+- this isn't maintained anymore
+- it still builds and works just fine, weirdly, for whatever reason
+- but it is also excruciatingly slow. i think this is because one of the dependencies changed and there's a pointless allocate-deallocate loop going on in the middle of an async generator (yeesh) and v8 is sensibly deoptimising it.
+- not important though
+
+- what *is* important:
+- i think our current approach towards spaced repetition is fundamentally solving the wrong problem, and i am trying to find the right problem so i can make something better.
+
+- most of the code in this repository is abstraction spaghetti, honestly don't even bother
+- the only neat thing is https://archive.org/download/english-portuguese-statmt
+- (contains an ungodly amount of high-quality translation data, not just portuguese)
+- (also doesn't download anything. it's a static list)
+
 <img src="https://github.com/ckoshka/langwitch-deno/raw/master/static/potted_plant.png" width="200" />
 
 ### The what
