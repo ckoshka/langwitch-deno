@@ -1,7 +1,7 @@
 # !!
 
 - this isn't maintained anymore
-- it still builds and works just fine, weirdly, for whatever reason
+- it still builds and works just fine, weirdly, for whatever reason. i'm not used to projects still working after two-ish years of inactivity but that's nix for ya
 - but it is also excruciatingly slow. i think this is because one of the dependencies changed and there's a pointless allocate-deallocate loop going on in the middle of an async generator (yeesh) and v8 is sensibly deoptimising it.
 - not important though
 
